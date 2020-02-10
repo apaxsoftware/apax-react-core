@@ -2,12 +2,22 @@
 
 > Contains core react functionality developed by Apax Software LLC
 
-[![NPM](https://img.shields.io/npm/v/react-core.svg)](https://www.npmjs.com/package/react-core) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-
 ## Install
 
+Add the following to your `package.json` under `dependencies`:
+
 ```bash
-npm install --save react-core
+"dependencies": {
+  ...
+  "react-core": "ssh://git@bitbucket.org:apaxsoftware/react-core.git#<version>",
+  ...
+}
+```
+
+then run:
+
+```bash
+yarn install
 ```
 
 ## Usage
@@ -28,4 +38,6 @@ class Example extends Component {
 
 ## License
 
-MIT © [thecodingtree](https://github.com/thecodingtree)
+This library is intended for the sole use of Apax Software LLC
+
+© [apaxsoftware](https://bitbucket.org/apaxsoftware/react-core/)
