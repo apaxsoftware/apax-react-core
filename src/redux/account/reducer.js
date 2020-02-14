@@ -9,7 +9,7 @@ export const initialState = {
   loginError: null,
 };
 
-export default (state=initialState, action) => {
+export default (state = initialState, action) => {
   switch (action.type) {
     case Actions.SIGNUP:
       return {

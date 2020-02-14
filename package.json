@@ -19,7 +19,9 @@
     "start": "rollup -c -w",
     "prepare": "yarn run build",
     "predeploy": "cd example && yarn install && yarn run build",
-    "deploy": "gh-pages -d example/build"
+    "deploy": "gh-pages -d example/build",
+    "lint": "npm-run-all lint:scripts",
+    "lint:scripts": "eslint ./src --ext .js --ignore-pattern node_modules"
   },
   "peerDependencies": {
     "axios": "^0.19.2",
@@ -51,11 +53,13 @@
     "eslint-config-standard": "^11.0.0",
     "eslint-config-standard-react": "^6.0.0",
     "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-node": "^7.0.1",
     "eslint-plugin-promise": "^4.0.0",
     "eslint-plugin-react": "^7.10.0",
     "eslint-plugin-standard": "^3.1.0",
     "gh-pages": "^1.2.0",
+    "npm-run-all": "^4.1.5",
     "lodash": "^4.17.15",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",

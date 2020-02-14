@@ -19,7 +19,7 @@ export const login = (formData, history) => {
 
 export const logout = () => {
   return {
-    type: LOGOUT
+    type: LOGOUT,
   };
 };
 
