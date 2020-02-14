@@ -9,12 +9,15 @@ import {
   import Cookies from 'universal-cookie';
 
   import {
-    LOAD_USER,
-    LOAD_USER_SUCCESS,
-    LOAD_USER_ERROR,
     LOGIN,
     LOGIN_SUCCESS,
     LOGIN_ERROR,
+    SIGNUP,
+    SIGNUP_SUCCESS,
+    SIGNUP_ERROR,
+    LOAD_USER,
+    LOAD_USER_SUCCESS,
+    LOAD_USER_ERROR,
     LOGOUT,
   } from './actions';
 
@@ -22,11 +25,29 @@ import {
   import { getUser, getToken } from '../account/selectors';
   import { minDelayCall } from '../helpers';
 
-  export const TOKEN_COOKIE = '_ksu_token';
+  export const TOKEN_COOKIE = '_react_core_token';
 
-  export function* login (email, password, history) {
+  export function* signup (action) {
+    const { formData, history } = action;
     try {
-      const response = yield minDelayCall(api.login, email, password);
+      const response = yield minDelayCall(api.signup, formData);
+
+      // Persist token for future page loads
+      new Cookies().set(TOKEN_COOKIE, response.key, { path: '/' });
+
+      // Redirect user to home
+      history.replace('/');
+      yield put({ type: SIGNUP_SUCCESS, ...response });
+    } catch (error) {
+      yield put({ type: SIGNUP_ERROR, error: error.response.data });
+    }
+  }
+
+  export function* login (action) {
+    const { formData, history } = action;
+
+    try {
+      const response = yield minDelayCall(api.login, formData);
 
       // Persist token for future page loads
       new Cookies().set(TOKEN_COOKIE, response.key, { path: '/' });
@@ -67,11 +88,13 @@ import {
       }
 
       if (!(yield select(getUser))) {
-        // Wait for login if we don't have a user
-        const { email, password, history } = yield take(LOGIN);
-
-        yield call(login, email, password, history);
-
+        // Wait for login / signup if we don't have a user
+        const action = yield take([LOGIN, SIGNUP]);
+        if (action.type === LOGIN) {
+          yield call(login, action);
+        } else {
+          yield call(signup, action);
+        }
       }
 
       if (yield select(getUser)) {

@@ -1,4 +1,5 @@
 import * as Actions from './actions';
+import { Action } from 'rxjs/internal/scheduler/Action';
 
 export const initialState = {
   user: null,
@@ -9,8 +10,26 @@ export const initialState = {
 };
 
 export default (state=initialState, action) => {
-  console.log("action: " + action.type + action.error);
   switch (action.type) {
+    case Actions.SIGNUP:
+      return {
+        ...state,
+        signupPending: true,
+      };
+    case Actions.SIGNUP_SUCCESS:
+      return {
+        ...state,
+        signupPending: false,
+        signupError: null,
+        user: action.user,
+        token: action.key,
+      };
+    case Action.SIGNUP_ERROR:
+      return {
+        ...state,
+        signupPending: false,
+        signupError: action.error,
+      };
     case Actions.LOGIN:
       return {
         ...state,
@@ -20,6 +39,7 @@ export default (state=initialState, action) => {
       return {
         ...state,
         loginPending: false,
+        loginError: null,
         user: action.user,
         token: action.key,
       };

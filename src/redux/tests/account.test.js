@@ -5,14 +5,24 @@ import Cookies from 'universal-cookie';
 import * as _ from 'lodash';
 import { mockHistory } from './helpers';
 import { action } from '../../redux/helpers';
-import { loginFlow, login, loadUser, TOKEN_COOKIE } from '../account/sagas';
+import {
+  loginFlow,
+  login as loginSaga,
+  signup as signupSaga,
+  loadUser,
+  TOKEN_COOKIE
+} from '../account/sagas';
 import { initialState } from '../account/reducer';
 import { accountReducer } from '../account';
 import { getUser, getToken } from '../account/selectors';
 import {
   login as loginAction,
   logout as logoutAction,
+  signup as signupAction,
   LOGIN,
+  SIGNUP,
+  SIGNUP_SUCCESS,
+  SIGNUP_ERROR,
   LOGIN_SUCCESS,
   LOGIN_ERROR,
   LOGOUT,
@@ -28,11 +38,20 @@ const mockUser = {
   password: 'mockPa$$word'
 };
 
+const mockSignupUser = {
+  id: 2,
+  name: 'Test1',
+  email: 'test1@test.com',
+  password1: 'password',
+  password2: 'password',
+};
+
 // Mock the entire cookies module (Cookies.*)
 jest.mock('universal-cookie', () => {
   const mCookie = {
     get: jest.fn(),
-    remove: jest.fn()
+    remove: jest.fn(),
+    set: jest.fn(),
   };
   return jest.fn(() => mCookie);
 });
@@ -45,12 +64,21 @@ it('Test loginFlow saga', async () => {
     // Saga attempts to load user
     .select(getUser)
     .next()
-    // No user found, Saga waits for login
-    .take(LOGIN)
+    // No user found, Saga waits for login or signup
+    .take([LOGIN, SIGNUP])
     // Trigger login action
-    .next(loginAction(mockUser, 0))
+    .next(loginAction({
+      email: mockUser.email,
+      password: mockUser.password
+    }, mockHistory))
     // Saga calls login
-    .call(login, mockUser.email, mockUser.password, 0)
+    .call(loginSaga, loginAction(
+        {
+          email: mockUser.email,
+          password: mockUser.password,
+        },
+        mockHistory)
+    )
     .next()
     .select(getUser)
     .next(mockUser)
@@ -83,7 +111,7 @@ it('Test loginFlow saga with existing token', async () => {
     .take(LOGOUT)
 });
 
-it('Test login saga with logout', async () => {
+it('Test loginFlow saga with logout', async () => {
   (new Cookies()).get.mockReturnValue(mockToken);
 
   testSaga(loginFlow)
@@ -109,6 +137,73 @@ it('Test login saga with logout', async () => {
     expect((new Cookies()).remove).toHaveBeenCalled();
 });
 
+it('Test loginFlow with signup', async () => {
+
+  (new Cookies()).get.mockReturnValue(null);
+
+  testSaga(loginFlow)
+    .next()
+    // Saga attempts to load user
+    .select(getUser)
+    .next()
+    // No user found, Saga waits for login or signup
+    .take([LOGIN, SIGNUP])
+    // Trigger login action
+    .next(signupAction({...mockSignupUser}, mockHistory))
+    // Saga calls login
+    .call(signupSaga, signupAction(
+        {...mockSignupUser},
+        mockHistory)
+    )
+    .next()
+    .select(getUser)
+    .next(mockUser)
+    // Saga select new token
+    .select(getToken)
+    .next()
+    // Saga settles and waits for LOGOUT
+    .take(LOGOUT)
+
+});
+
+it('Test signup saga', async () => {
+  testSaga(signupSaga, signupAction(
+    {
+      ...mockSignupUser
+    }, mockHistory))
+    .next()
+    .next({...mockSignupUser, key: mockToken})
+    .put({ type: SIGNUP_SUCCESS, ...mockSignupUser, key: mockToken })
+    .next()
+    .isDone()
+
+    expect(mockHistory.replace).toHaveBeenCalledWith('/');
+    expect((new Cookies().set)).toHaveBeenCalledWith(
+      TOKEN_COOKIE,
+      mockToken,
+      { path: '/' }
+    )
+});
+
+it('Test login saga', async () => {
+  testSaga(loginSaga, loginAction(
+    {
+      ...mockUser
+    }, mockHistory))
+    .next()
+    .next({...mockUser, key: mockToken})
+    .put({ type: LOGIN_SUCCESS, ...mockUser, key: mockToken })
+    .next()
+    .isDone()
+
+    expect(mockHistory.replace).toHaveBeenCalledWith('/');
+    expect((new Cookies().set)).toHaveBeenCalledWith(
+      TOKEN_COOKIE,
+      mockToken,
+      { path: '/' }
+    )
+});
+
 it('Test login saga with error', async () => {
 
   const fakeError = new Error();
@@ -116,10 +211,15 @@ it('Test login saga with error', async () => {
     data: "Some error happend"
   };
 
-  testSaga(login)
+  testSaga(loginSaga, loginAction({
+      email: mockUser.email,
+      password: mockUser.password,
+    }, mockHistory))
     .next()
     .throw(fakeError)
     .put({ type: LOGIN_ERROR, error: fakeError.response.data})
+    .next()
+    .isDone()
 });
 
 it('Test load user', async () => {
