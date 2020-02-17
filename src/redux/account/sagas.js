@@ -26,7 +26,7 @@ import { minDelayCall } from '../helpers';
 
 export const TOKEN_COOKIE = '_react_core_token';
 
-export function * signup (action) {
+export function * doSignup (action) {
   const { formData, history } = action;
   try {
     const response = yield minDelayCall(api.signup, formData);
@@ -42,7 +42,7 @@ export function * signup (action) {
   }
 }
 
-export function* login (action) {
+export function* doLogin (action) {
   const { formData, history } = action;
 
   try {
@@ -90,9 +90,9 @@ export function* loginFlow () {
       // Wait for login / signup if we don't have a user
       const action = yield take([LOGIN, SIGNUP]);
       if (action.type === LOGIN) {
-        yield call(login, action);
+        yield call(doLogin, action);
       } else {
-        yield call(signup, action);
+        yield call(doSignup, action);
       }
     }
 

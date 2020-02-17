@@ -7,6 +7,8 @@ export const initialState = {
   userLoading: false,
   loginPending: false,
   loginError: null,
+  signupPending: false,
+  signupError: null,
 };
 
 export default (state = initialState, action) => {

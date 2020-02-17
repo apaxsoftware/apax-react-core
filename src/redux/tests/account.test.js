@@ -3,8 +3,8 @@ import Cookies from 'universal-cookie';
 import { mockHistory } from './helpers';
 import {
   loginFlow,
-  login as loginSaga,
-  signup as signupSaga,
+  doLogin,
+  doSignup,
   loadUser,
   TOKEN_COOKIE,
 } from '../account/sagas';
@@ -66,7 +66,7 @@ it('Test loginFlow saga', async () => {
       password: mockUser.password,
     }, mockHistory,))
     // Saga calls login
-    .call(loginSaga, loginAction(
+    .call(doLogin, loginAction(
       {
         email: mockUser.email,
         password: mockUser.password,
@@ -145,7 +145,7 @@ it('Test loginFlow with signup', async () => {
     // Trigger login action
     .next(signupAction({...mockSignupUser}, mockHistory))
     // Saga calls login
-    .call(signupSaga, signupAction(
+    .call(doSignup, signupAction(
       {...mockSignupUser},
       mockHistory)
     )
@@ -161,7 +161,7 @@ it('Test loginFlow with signup', async () => {
 });
 
 it('Test signup saga', async () => {
-  testSaga(signupSaga, signupAction(
+  testSaga(doSignup, signupAction(
     {
       ...mockSignupUser,
     }, mockHistory))
@@ -180,7 +180,7 @@ it('Test signup saga', async () => {
 });
 
 it('Test login saga', async () => {
-  testSaga(loginSaga, loginAction(
+  testSaga(doLogin, loginAction(
     {
       ...mockUser,
     }, mockHistory))
@@ -205,7 +205,7 @@ it('Test login saga with error', async () => {
     data: 'Some error happend',
   };
 
-  testSaga(loginSaga, loginAction({
+  testSaga(doLogin, loginAction({
     email: mockUser.email,
     password: mockUser.password,
   }, mockHistory))

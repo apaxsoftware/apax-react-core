@@ -20,8 +20,7 @@
     "prepare": "yarn run build",
     "predeploy": "cd example && yarn install && yarn run build",
     "deploy": "gh-pages -d example/build",
-    "lint": "npm-run-all lint:scripts",
-    "lint:scripts": "eslint ./src --ext .js --ignore-pattern node_modules"
+    "lint": "eslint ./src --ext .js --ignore-pattern node_modules"
   },
   "peerDependencies": {
     "axios": "^0.19.2",
