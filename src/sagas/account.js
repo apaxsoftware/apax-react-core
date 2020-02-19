@@ -23,9 +23,8 @@ import {
 
 import api from './api';
 import { getUser } from '../selectors/account';
+import { getTokenName } from '../selectors/env';
 import { minDelayCall } from './helpers';
-
-export const TOKEN_COOKIE = '_react_core_token';
 
 export function * doSignup (action) {
   const { formData, history } = action;
@@ -33,7 +32,8 @@ export function * doSignup (action) {
     const response = yield minDelayCall(api.signup, formData);
 
     // Persist token for future page loads
-    new Cookies().set(TOKEN_COOKIE, response.key, { path: '/' });
+    const tokenName = yield select(getTokenName);
+    new Cookies().set(tokenName, response.key, { path: '/' });
 
     // Redirect user to home
     history.replace('/');
@@ -50,7 +50,8 @@ export function* doLogin (action) {
     const response = yield minDelayCall(api.login, formData);
 
     // Persist token for future page loads
-    new Cookies().set(TOKEN_COOKIE, response.key, { path: '/' });
+    const tokenName = yield select(getTokenName);
+    new Cookies().set(tokenName, response.key, { path: '/' });
 
     // Redirect user to home
     history.replace('/');
@@ -75,7 +76,8 @@ export function* loadUser (token) {
     yield put({ type: LOAD_USER_SUCCESS, user});
   } catch (error) {
     // Token is bogus. Remove it.
-    new Cookies().remove(TOKEN_COOKIE, { path: '/' });
+    const tokenName = yield select(getTokenName);
+    new Cookies().remove(tokenName, { path: '/' });
 
     yield put({ type: LOAD_USER_ERROR });
   }
@@ -85,7 +87,8 @@ export function* loadUser (token) {
 export function* loginFlow () {
   while(true) {
     // Check for existing token
-    const token = new Cookies().get(TOKEN_COOKIE);
+    const tokenName = yield select(getTokenName);
+    const token = new Cookies().get(tokenName);
 
     if (token) {
       // Load the user if we found a token
@@ -105,7 +108,9 @@ export function* loginFlow () {
     if (yield select(getUser)) {
       // Wait for logout
       yield take(LOGOUT);
-      new Cookies().remove(TOKEN_COOKIE, { path: '/' });
+
+      const tokenName = yield select(getTokenName);
+      new Cookies().remove(tokenName, { path: '/' });
     }
   }
 }

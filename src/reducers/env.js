@@ -1,8 +1,9 @@
 import * as Actions from '../actions/env';
 
 const initialState = {
-  API_DOMAIN: '',
-  API_ROOT: '',
+  api_domain: '',
+  api_root: '',
+  token_name: '',
 };
 
 export default (state = initialState, action) => {
@@ -11,8 +12,9 @@ export default (state = initialState, action) => {
       return {
         ...state,
 
-        API_DOMAIN: action.env.api_domain,
-        API_ROOT: action.env.api_root,
+        api_domain: action.api_domain,
+        api_root: action.api_root,
+        token_name: action.token_name,
       };
 
     default:

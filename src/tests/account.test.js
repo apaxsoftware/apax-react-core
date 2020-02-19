@@ -77,9 +77,6 @@ it('Test loginFlow saga', async () => {
     .next()
     .select(getUser)
     .next(mockUser)
-    // Saga select new token
-    // .select(getToken)
-    // .next()
     // Saga settles and waits for LOGOUT
     .take(LOGOUT);
 });
@@ -99,9 +96,6 @@ it('Test loginFlow saga with existing token', async () => {
     // User found, skip over login
     .select(getUser)
     .next(mockUser)
-    // Saga selects token for user
-    // .select(getToken)
-    // .next()
     // Saga settles in waiting for LOGOUT
     .take(LOGOUT);
 });
@@ -120,9 +114,6 @@ it('Test loginFlow saga with logout', async () => {
     // User found, skip over login
     .select(getUser)
     .next(mockUser)
-    // Saga selects token for user
-    // .select(getToken)
-    // .next()
     // Saga settles in waiting for LOGOUT
     .take(LOGOUT)
     // Trigger logout action
@@ -153,9 +144,6 @@ it('Test loginFlow with signup', async () => {
     .next()
     .select(getUser)
     .next(mockUser)
-    // Saga select new token
-    // .select(getToken)
-    // .next()
     // Saga settles and waits for LOGOUT
     .take(LOGOUT);
 
