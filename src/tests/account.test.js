@@ -6,9 +6,9 @@ import {
   doLogin,
   doSignup,
   loadUser,
-  TOKEN_COOKIE,
 } from '../sagas/account';
-import { getUser, getToken } from '../selectors/account';
+import { getUser } from '../selectors/account';
+import { getTokenName } from '../selectors/env';
 import {
   login as loginAction,
   logout as logoutAction,
@@ -52,10 +52,13 @@ jest.mock('universal-cookie', () => {
 });
 
 const mockToken = 'mock_token';
+const mockTokenName = 'account_tests';
 
 it('Test loginFlow saga', async () => {
   testSaga(loginFlow)
     .next()
+    .select(getTokenName)
+    .next(mockToken)
     // Saga attempts to load user
     .select(getUser)
     .next()
@@ -87,6 +90,8 @@ it('Test loginFlow saga with existing token', async () => {
 
   testSaga(loginFlow)
     .next()
+    .select(getTokenName)
+    .next(mockTokenName)
     // Load user
     .call(loadUser, mockToken)
     .next()
@@ -105,6 +110,8 @@ it('Test loginFlow saga with logout', async () => {
 
   testSaga(loginFlow)
     .next()
+    .select(getTokenName)
+    .next(mockTokenName)
     // Load user
     .call(loadUser, mockToken)
     .next()
@@ -117,7 +124,9 @@ it('Test loginFlow saga with logout', async () => {
     // Saga settles in waiting for LOGOUT
     .take(LOGOUT)
     // Trigger logout action
-    .next(logoutAction);
+    .next(logoutAction)
+    .select(getTokenName)
+    .next(getTokenName);
 
   // Assert that user token was cleared
   expect((new Cookies()).remove).toHaveBeenCalled();
@@ -129,6 +138,8 @@ it('Test loginFlow with signup', async () => {
 
   testSaga(loginFlow)
     .next()
+    .select(getTokenName)
+    .next(mockToken)
     // Saga attempts to load user
     .select(getUser)
     .next()
@@ -156,13 +167,15 @@ it('Test signup saga', async () => {
     }, mockHistory))
     .next()
     .next({...mockSignupUser, key: mockToken})
+    .select(getTokenName)
+    .next(mockTokenName)
     .put({ type: SIGNUP_SUCCESS, ...mockSignupUser, key: mockToken })
     .next()
     .isDone();
 
   expect(mockHistory.replace).toHaveBeenCalledWith('/');
   expect((new Cookies().set)).toHaveBeenCalledWith(
-    TOKEN_COOKIE,
+    mockTokenName,
     mockToken,
     { path: '/' }
   );
@@ -175,13 +188,15 @@ it('Test login saga', async () => {
     }, mockHistory))
     .next()
     .next({...mockUser, key: mockToken})
+    .select(getTokenName)
+    .next(mockTokenName)
     .put({ type: LOGIN_SUCCESS, ...mockUser, key: mockToken })
     .next()
     .isDone();
 
   expect(mockHistory.replace).toHaveBeenCalledWith('/');
   expect((new Cookies().set)).toHaveBeenCalledWith(
-    TOKEN_COOKIE,
+    mockTokenName,
     mockToken,
     { path: '/' }
   );
@@ -234,6 +249,8 @@ it('Test load user with error', async () => {
     // Trigger error
     .throw(mockError)
     // Saga triggers LOAD_USER_ERROR
+    .select(getTokenName)
+    .next(mockTokenName)
     .put({ type: LOAD_USER_ERROR })
     .next()
     .isDone();
