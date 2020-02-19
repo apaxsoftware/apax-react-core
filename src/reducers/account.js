@@ -1,4 +1,4 @@
-import * as Actions from './actions';
+import * as Actions from '../actions/account';
 import { Action } from 'rxjs/internal/scheduler/Action';
 
 export const initialState = {
@@ -13,6 +13,11 @@ export const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
+    case Actions.SET_USER_TOKEN:
+      return {
+        ...state,
+        token: action.token,
+      };
     case Actions.SIGNUP:
       return {
         ...state,
@@ -61,7 +66,6 @@ export default (state = initialState, action) => {
         ...state,
         userLoading: false,
         user: action.user,
-        token: action.token,
       };
     case Actions.LOAD_USER_ERROR:
       return {

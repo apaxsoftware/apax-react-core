@@ -1,10 +1,10 @@
 import {
+  all,
   call,
   put,
   take,
   select,
 } from 'redux-saga/effects';
-import axios from 'axios';
 import Cookies from 'universal-cookie';
 
 import {
@@ -18,11 +18,12 @@ import {
   LOAD_USER_SUCCESS,
   LOAD_USER_ERROR,
   LOGOUT,
-} from './actions';
+  setUserToken,
+} from '../actions/account';
 
-import api from '../../utils/api';
-import { getUser, getToken } from '../account/selectors';
-import { minDelayCall } from '../helpers';
+import api from './api';
+import { getUser } from '../selectors/account';
+import { minDelayCall } from './helpers';
 
 export const TOKEN_COOKIE = '_react_core_token';
 
@@ -64,9 +65,14 @@ export function* loadUser (token) {
   yield put({ type: LOAD_USER });
 
   try {
-    const user = yield minDelayCall(api.loadUser, token);
 
-    yield put({ type: LOAD_USER_SUCCESS, user, token});
+    if(token) {
+      yield put(setUserToken(token));
+    }
+
+    const user = yield minDelayCall(api.loadUser);
+
+    yield put({ type: LOAD_USER_SUCCESS, user});
   } catch (error) {
     // Token is bogus. Remove it.
     new Cookies().remove(TOKEN_COOKIE, { path: '/' });
@@ -97,13 +103,15 @@ export function* loginFlow () {
     }
 
     if (yield select(getUser)) {
-      // Once we have a user, configure axios to always use token
-      const newToken = yield select(getToken);
-      axios.defaults.headers.common['Authorization'] = `Token ${newToken}`;
-
       // Wait for logout
       yield take(LOGOUT);
       new Cookies().remove(TOKEN_COOKIE, { path: '/' });
     }
   }
+}
+
+export default function* () {
+  yield all([
+    loginFlow(),
+  ]);
 }

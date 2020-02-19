@@ -7,12 +7,13 @@ import {
   doSignup,
   loadUser,
   TOKEN_COOKIE,
-} from '../account/sagas';
-import { getUser, getToken } from '../account/selectors';
+} from '../sagas/account';
+import { getUser, getToken } from '../selectors/account';
 import {
   login as loginAction,
   logout as logoutAction,
   signup as signupAction,
+  setUserToken,
   LOGIN,
   SIGNUP,
   SIGNUP_SUCCESS,
@@ -22,7 +23,7 @@ import {
   LOAD_USER,
   LOAD_USER_ERROR,
   LOAD_USER_SUCCESS,
-} from '../account/actions';
+} from '../actions/account';
 
 const mockUser = {
   id: 1,
@@ -77,8 +78,8 @@ it('Test loginFlow saga', async () => {
     .select(getUser)
     .next(mockUser)
     // Saga select new token
-    .select(getToken)
-    .next()
+    // .select(getToken)
+    // .next()
     // Saga settles and waits for LOGOUT
     .take(LOGOUT);
 });
@@ -99,8 +100,8 @@ it('Test loginFlow saga with existing token', async () => {
     .select(getUser)
     .next(mockUser)
     // Saga selects token for user
-    .select(getToken)
-    .next()
+    // .select(getToken)
+    // .next()
     // Saga settles in waiting for LOGOUT
     .take(LOGOUT);
 });
@@ -120,8 +121,8 @@ it('Test loginFlow saga with logout', async () => {
     .select(getUser)
     .next(mockUser)
     // Saga selects token for user
-    .select(getToken)
-    .next()
+    // .select(getToken)
+    // .next()
     // Saga settles in waiting for LOGOUT
     .take(LOGOUT)
     // Trigger logout action
@@ -153,8 +154,8 @@ it('Test loginFlow with signup', async () => {
     .select(getUser)
     .next(mockUser)
     // Saga select new token
-    .select(getToken)
-    .next()
+    // .select(getToken)
+    // .next()
     // Saga settles and waits for LOGOUT
     .take(LOGOUT);
 
@@ -223,10 +224,12 @@ it('Test load user', async () => {
     .put({ type: LOAD_USER })
     // Skip delay call
     .next()
+    .put(setUserToken(mockToken))
+    .next()
     // Mock user returned
     .next(mockUser)
     // Saga triggers LOAD_USER_SUCCESS
-    .put({ type: LOAD_USER_SUCCESS, user: {...mockUser}, token: mockToken})
+    .put({ type: LOAD_USER_SUCCESS, user: {...mockUser}})
     .next()
     .isDone();
 });
