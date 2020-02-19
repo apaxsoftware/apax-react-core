@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { select } from 'redux-saga/effects';
+import { call, select } from 'redux-saga/effects';
 
 import { getToken } from '../selectors/account';
 import { getApiRoot } from '../selectors/env';
@@ -20,8 +20,8 @@ export function* getHeaders (authenticationRequired) {
   return { headers };
 }
 
-function* apiPost (path, data, authenticationRequired = true) {
-  const headers = yield getHeaders(authenticationRequired);
+export function* apiPost (path, data, authenticationRequired = true) {
+  const headers = yield call(getHeaders, authenticationRequired);
   const apiRoot = yield select(getApiRoot);
 
   return yield axios.post(
@@ -32,7 +32,7 @@ function* apiPost (path, data, authenticationRequired = true) {
 }
 
 function* apiGet (path, data, authenticationRequired = true) {
-  const headers = yield getHeaders(authenticationRequired);
+  const headers = yield call(getHeaders, authenticationRequired);
   const apiRoot = yield select(getApiRoot);
 
   let url = `${apiRoot}/${path}`;
