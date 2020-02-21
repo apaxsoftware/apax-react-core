@@ -10,43 +10,41 @@ import { getToken } from '../selectors/account';
 import { getApiRoot } from '../selectors/env';
 
 const mockToken = 'mock_token';
-const mockApiRoot = 'http://testserver.com'
+const mockApiRoot = 'http://testserver.com';
 
 const mockLogin = { email: 'test@test.com', password: 'password' };
 
 const mockHeadersWithoutAuth = {
   headers: {
-    'Content-Type': 'application/json'
-  }
+    'Content-Type': 'application/json',
+  },
 };
 
 const mockHeadersWithAuth = {
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': `Token ${mockToken}`
-  }
+    'Authorization': `Token ${mockToken}`,
+  },
 };
 
 jest.mock('axios');
 
 it('Test get headers without authentication', async () => {
-  const getHeaderSaga =
-    testSaga(getHeaders, false)
-      .next()
-      .returns(mockHeadersWithoutAuth)
-      .next()
-      .isDone();
+  testSaga(getHeaders, false)
+    .next()
+    .returns(mockHeadersWithoutAuth)
+    .next()
+    .isDone();
 });
 
 it('Test get headers with authentication', async () => {
-  const getHeaderSaga =
-    testSaga(getHeaders, true)
-      .next()
-      .select(getToken)
-      .next(mockToken)
-      .returns(mockHeadersWithAuth)
-      .next()
-      .isDone();
+  testSaga(getHeaders, true)
+    .next()
+    .select(getToken)
+    .next(mockToken)
+    .returns(mockHeadersWithAuth)
+    .next()
+    .isDone();
 });
 
 it('Test api.login', async () => {
@@ -58,13 +56,13 @@ it('Test api.login', async () => {
     .call(getHeaders, false)
     .next(mockHeadersWithoutAuth)
     .select(getApiRoot)
-    .next(mockApiRoot)
+    .next(mockApiRoot);
 
-    expect(axios.post).toHaveBeenCalledWith(
-      `${mockApiRoot}/api/login/`,
-      mockLogin,
-      mockHeadersWithoutAuth
-    )
+  expect(axios.post).toHaveBeenCalledWith(
+    `${mockApiRoot}/api/login/`,
+    mockLogin,
+    mockHeadersWithoutAuth
+  );
 });
 
 it('Test api.loadUser', async () => {
@@ -75,10 +73,10 @@ it('Test api.loadUser', async () => {
     .call(getHeaders, true)
     .next(mockHeadersWithAuth)
     .select(getApiRoot)
-    .next(mockApiRoot)
+    .next(mockApiRoot);
 
   expect(axios.get).toHaveBeenCalledWith(
     `${mockApiRoot}/api/user/`,
     mockHeadersWithAuth
-  )
-})
+  );
+});
