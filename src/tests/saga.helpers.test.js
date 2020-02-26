@@ -3,21 +3,21 @@ import { expectSaga } from 'redux-saga-test-plan';
 
 import { delay, minDelayCall } from '../sagas/helpers';
 
-function elapsedTime(start, end) {
+function elapsedTime (start, end) {
   return end - start;
 }
 
-function compareWithThreshold(num1, num2, threshold) {
+function compareWithThreshold (num1, num2, threshold) {
   return Math.abs(num2 - num1) <= threshold;
 }
 
-function* testingSaga(delayMs) {
+function* testingSaga (delayMs) {
   yield delay(delayMs);
 
   yield put({payload: 'I am done!'});
 }
 
-it('Test delay function', done => {
+it('Test delay function', ( done ) => {
 
   const delayMs = 500;
   const start = (new Date().getTime());
@@ -30,7 +30,7 @@ it('Test delay function', done => {
     expect(compareWithThreshold(elapsed, delayMs, 10)).toBe(true);
 
     done();
-  })
+  });
 
 });
 
@@ -40,7 +40,7 @@ it('Test minDelay waits for at least the min wait time (500ms)', async () => {
   const shortDelay = 250;
 
   expectSaga(minDelayCall, testingSaga, shortDelay)
-    .put({payload: "I am done!"})
+    .put({payload: 'I am done!'})
 
     // Increase timeout
     .run(1000)
@@ -59,7 +59,7 @@ it('Test minDelay waits for longer running task', async () => {
   const longDelay = 750;
 
   expectSaga(minDelayCall, testingSaga, longDelay)
-    .put({payload: "I am done!"})
+    .put({payload: 'I am done!'})
 
     // Increase timeout
     .run(1000)
