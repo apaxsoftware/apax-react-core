@@ -6,13 +6,3 @@ cache: npm
 script:
   - yarn lint
   - yarn test:coverage
-
-deploy:
-  provider: npm
-  email: dave@apaxsoftware.com
-  api_key: $NPM_AUTH_TOKEN
-  tag: next
-  on:
-    branch:
-      master
-

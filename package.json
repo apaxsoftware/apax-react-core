@@ -78,13 +78,17 @@
   },
   "jest": {
     "collectCoverageFrom": [
-      "src/redux/**/*.js"
+      "src/sagas/**/*.js",
+      "!src/**/index.js"
     ],
     "coverageThreshold": {
       "global": {
-        "lines": 100
+        "lines": 90
       }
     }
+  },
+  "resolutions": {
+    "handlebars": "4.5.0"
   },
   "files": [
     "dist"
