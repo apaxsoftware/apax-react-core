@@ -4,9 +4,10 @@ export const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
 // Take at least 500ms.
 export function* minDelayCall (...callArgs) {
+
   const [ result ] = yield all([
-    yield call(...callArgs),
-    yield call(delay, 500),
+    call(...callArgs),
+    call(delay, 500),
   ]);
 
   return result;
