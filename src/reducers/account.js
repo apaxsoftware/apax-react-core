@@ -85,7 +85,7 @@ export default (state = initialState, action) => {
         signupError: null,
         loginError: null,
         loadUserError: null,
-      }
+      };
     default:
       return state;
   }

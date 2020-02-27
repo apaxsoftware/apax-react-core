@@ -18,11 +18,10 @@ export const setUserToken = (token) => {
   };
 };
 
-export const login = (formData, history) => {
+export const login = (formData) => {
   return {
     type: LOGIN,
     formData,
-    history,
   };
 };
 
@@ -32,10 +31,9 @@ export const logout = () => {
   };
 };
 
-export const signup = (formData, history) => {
+export const signup = (formData) => {
   return {
     type: SIGNUP,
     formData,
-    history,
   };
 };
