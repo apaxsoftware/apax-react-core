@@ -1,6 +1,5 @@
 import { testSaga } from 'redux-saga-test-plan';
 import Cookies from 'universal-cookie';
-import { mockHistory } from './helpers';
 import {
   loginFlow,
   doLogin,
@@ -68,14 +67,13 @@ it('Test loginFlow saga', async () => {
     .next(loginAction({
       email: mockUser.email,
       password: mockUser.password,
-    }, mockHistory,))
+    }))
     // Saga calls login
     .call(doLogin, loginAction(
       {
         email: mockUser.email,
         password: mockUser.password,
-      },
-      mockHistory)
+      })
     )
     .next()
     .select(getUser)
@@ -146,11 +144,10 @@ it('Test loginFlow with signup', async () => {
     // No user found, Saga waits for login or signup
     .take([LOGIN, SIGNUP])
     // Trigger login action
-    .next(signupAction({...mockSignupUser}, mockHistory))
+    .next(signupAction({...mockSignupUser}))
     // Saga calls login
     .call(doSignup, signupAction(
-      {...mockSignupUser},
-      mockHistory)
+      {...mockSignupUser})
     )
     .next()
     .select(getUser)
@@ -164,7 +161,7 @@ it('Test signup saga', async () => {
   testSaga(doSignup, signupAction(
     {
       ...mockSignupUser,
-    }, mockHistory))
+    }))
     .next()
     .next({...mockSignupUser, key: mockToken})
     .select(getTokenName)
@@ -173,7 +170,6 @@ it('Test signup saga', async () => {
     .next()
     .isDone();
 
-  expect(mockHistory.replace).toHaveBeenCalledWith('/');
   expect((new Cookies().set)).toHaveBeenCalledWith(
     mockTokenName,
     mockToken,
@@ -185,7 +181,7 @@ it('Test login saga', async () => {
   testSaga(doLogin, loginAction(
     {
       ...mockUser,
-    }, mockHistory))
+    }))
     .next()
     .next({...mockUser, key: mockToken})
     .select(getTokenName)
@@ -194,7 +190,6 @@ it('Test login saga', async () => {
     .next()
     .isDone();
 
-  expect(mockHistory.replace).toHaveBeenCalledWith('/');
   expect((new Cookies().set)).toHaveBeenCalledWith(
     mockTokenName,
     mockToken,
@@ -212,7 +207,7 @@ it('Test login saga with error', async () => {
   testSaga(doLogin, loginAction({
     email: mockUser.email,
     password: mockUser.password,
-  }, mockHistory))
+  }))
     .next()
     .throw(fakeError)
     .put({ type: LOGIN_ERROR, error: fakeError.response.data})

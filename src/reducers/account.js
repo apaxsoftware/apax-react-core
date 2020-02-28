@@ -5,6 +5,7 @@ export const initialState = {
   user: null,
   token: null,
   userLoading: false,
+  loadUserError: null,
   loginPending: false,
   loginError: null,
   signupPending: false,
@@ -77,6 +78,13 @@ export default (state = initialState, action) => {
         ...state,
         user: null,
         token: null,
+      };
+    case Actions.CLEAR_ERRORS:
+      return {
+        ...state,
+        signupError: null,
+        loginError: null,
+        loadUserError: null,
       };
     default:
       return state;

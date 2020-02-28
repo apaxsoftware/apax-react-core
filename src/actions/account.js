@@ -9,6 +9,7 @@ export const SIGNUP_SUCCESS = 'SIGNUP_SUCCESS';
 export const SIGNUP_ERROR = 'SIGNUP_ERROR';
 export const LOGIN_ERROR = 'LOGIN_ERROR';
 export const LOGOUT = 'LOGOUT';
+export const CLEAR_ERRORS = 'CLEAR_ERRORS';
 
 export const setUserToken = (token) => {
   return {
@@ -17,11 +18,10 @@ export const setUserToken = (token) => {
   };
 };
 
-export const login = (formData, history) => {
+export const login = (formData) => {
   return {
     type: LOGIN,
     formData,
-    history,
   };
 };
 
@@ -31,10 +31,9 @@ export const logout = () => {
   };
 };
 
-export const signup = (formData, history) => {
+export const signup = (formData) => {
   return {
     type: SIGNUP,
     formData,
-    history,
   };
 };
