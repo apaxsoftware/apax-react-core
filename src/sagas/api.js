@@ -31,7 +31,7 @@ export function* apiPost (path, data, authenticationRequired = true) {
   ).then((res) => res.data);
 }
 
-function* apiGet (path, data, authenticationRequired = true) {
+export function* apiGet (path, data, authenticationRequired = true) {
   const headers = yield call(getHeaders, authenticationRequired);
   const apiRoot = yield select(getApiRoot);
 
@@ -43,6 +43,44 @@ function* apiGet (path, data, authenticationRequired = true) {
   }
 
   return yield axios.get(
+    url,
+    headers,
+  ).then((res) => res.data);
+}
+
+export function* apiPut (path, data, authenticationRequired = true) {
+  const headers = yield call(getHeaders, authenticationRequired);
+  const apiRoot = yield select(getApiRoot);
+
+  let url = `${apiRoot}/${path}`;
+
+  return yield axios.put(
+    url,
+    data,
+    headers,
+  ).then((res) => res.data);
+}
+
+export function* apiPatch (path, data, authenticationRequired = true) {
+  const headers = yield call(getHeaders, authenticationRequired);
+  const apiRoot = yield select(getApiRoot);
+
+  let url = `${apiRoot}/${path}`;
+
+  return yield axios.patch(
+    url,
+    data,
+    headers,
+  ).then((res) => res.data);
+}
+
+export function* apiDelete (path, authenticationRequired = true) {
+  const headers = yield call(getHeaders, authenticationRequired);
+  const apiRoot = yield select(getApiRoot);
+
+  let url = `${apiRoot}/${path}`;
+
+  return yield axios.delete(
     url,
     headers,
   ).then((res) => res.data);
