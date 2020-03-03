@@ -4,6 +4,11 @@ import * as axios from 'axios';
 import {
   getHeaders,
   default as api,
+  apiPost,
+  apiGet,
+  apiPut,
+  apiPatch,
+  apiDelete,
 } from '../sagas/api';
 
 import { getToken } from '../selectors/account';
@@ -77,6 +82,110 @@ it('Test api.loadUser', async () => {
 
   expect(axios.get).toHaveBeenCalledWith(
     `${mockApiRoot}/api/user/`,
+    mockHeadersWithAuth
+  );
+});
+
+it('Test apiPost', async () => {
+
+  axios.post.mockImplementation(() => Promise.resolve({ data: 'success'}));
+
+  const testUrl = 'test/post/';
+  const testData = {'test': 'value'};
+
+  testSaga(apiPost, testUrl, testData, true)
+    .next()
+    .call(getHeaders, true)
+    .next(mockHeadersWithAuth)
+    .select(getApiRoot)
+    .next(mockApiRoot);
+
+  expect(axios.post).toHaveBeenCalledWith(
+    `${mockApiRoot}/${testUrl}`,
+    testData,
+    mockHeadersWithAuth
+  );
+});
+
+it('Test apiGet', async () => {
+
+  axios.get.mockImplementation(() => Promise.resolve({ data: 'success'}));
+
+  const testUrl = 'test/get/';
+  const testData = {'test': 'value'};
+
+  const testUrlWithParams = `${testUrl}?test=value`;
+
+  testSaga(apiGet, testUrl, testData, true)
+    .next()
+    .call(getHeaders, true)
+    .next(mockHeadersWithAuth)
+    .select(getApiRoot)
+    .next(mockApiRoot);
+
+  expect(axios.get).toHaveBeenCalledWith(
+    `${mockApiRoot}/${testUrlWithParams}`,
+    mockHeadersWithAuth
+  );
+});
+
+it('Test apiPut', async () => {
+
+  axios.put.mockImplementation(() => Promise.resolve({ data: 'success'}));
+
+  const testUrl = 'test/put/';
+  const testData = {'test': 'value'};
+
+  testSaga(apiPut, testUrl, testData, true)
+    .next()
+    .call(getHeaders, true)
+    .next(mockHeadersWithAuth)
+    .select(getApiRoot)
+    .next(mockApiRoot);
+
+  expect(axios.put).toHaveBeenCalledWith(
+    `${mockApiRoot}/${testUrl}`,
+    testData,
+    mockHeadersWithAuth
+  );
+});
+
+it('Test apiPatch', async () => {
+
+  axios.patch.mockImplementation(() => Promise.resolve({ data: 'success'}));
+
+  const testUrl = 'test/patch/';
+  const testData = {'test': 'value'};
+
+  testSaga(apiPatch, testUrl, testData, true)
+    .next()
+    .call(getHeaders, true)
+    .next(mockHeadersWithAuth)
+    .select(getApiRoot)
+    .next(mockApiRoot);
+
+  expect(axios.patch).toHaveBeenCalledWith(
+    `${mockApiRoot}/${testUrl}`,
+    testData,
+    mockHeadersWithAuth
+  );
+});
+
+it('Test apiDelete', async () => {
+
+  axios.delete.mockImplementation(() => Promise.resolve({ data: 'success'}));
+
+  const testUrl = 'test/delete/1';
+
+  testSaga(apiDelete, testUrl, true)
+    .next()
+    .call(getHeaders, true)
+    .next(mockHeadersWithAuth)
+    .select(getApiRoot)
+    .next(mockApiRoot);
+
+  expect(axios.delete).toHaveBeenCalledWith(
+    `${mockApiRoot}/${testUrl}`,
     mockHeadersWithAuth
   );
 });

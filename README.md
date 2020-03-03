@@ -114,8 +114,6 @@ export default function Signup() {
 }
 ```
 
-}
-
 ### Login User
 
 ```
@@ -140,8 +138,31 @@ export default function Signup() {
 }
 ```
 
-}
+### API
 
+The following API methods are available:
+
+`apiGet(path, data, authenticationRequired = true)`
+
+`apiPost(path, data, authenticationRequired = true)`
+
+`apiPut(path, data, authenticationRequired = true)`
+
+`apiPatch(path, data, authenticationRequired = true)`
+
+`apiDelete(path, authenticationRequired = true)`
+
+#### Usage
+```
+import {
+  apiGet
+} from 'apax-react-core';
+
+
+...
+
+const response = yield apiGet('api/mypath/');
+```
 
 ## License
 
