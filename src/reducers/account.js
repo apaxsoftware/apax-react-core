@@ -1,5 +1,4 @@
 import * as Actions from '../actions/account';
-import { Action } from 'rxjs/internal/scheduler/Action';
 
 export const initialState = {
   user: null,
@@ -32,7 +31,7 @@ export default (state = initialState, action) => {
         user: action.user,
         token: action.key,
       };
-    case Action.SIGNUP_ERROR:
+    case Actions.SIGNUP_ERROR:
       return {
         ...state,
         signupPending: false,

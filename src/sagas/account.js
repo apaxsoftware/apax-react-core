@@ -27,31 +27,32 @@ import { getTokenName } from '../selectors/env';
 import { minDelayCall } from './helpers';
 
 export function * doSignup (action) {
-  const { formData } = action;
+  const { formData, nextRoute } = action;
+
   try {
     const response = yield minDelayCall(api.signup, formData);
 
     // Persist token for future page loads
     const tokenName = yield select(getTokenName);
-    new Cookies().set(tokenName, response.key, { path: '/' });
+    new Cookies().set(tokenName, response.key);
 
-    yield put({ type: SIGNUP_SUCCESS, ...response });
+    yield put({ type: SIGNUP_SUCCESS, response, nextRoute });
   } catch (error) {
     yield put({ type: SIGNUP_ERROR, error: error.response.data });
   }
 }
 
 export function* doLogin (action) {
-  const { formData } = action;
+  const { formData, nextRoute } = action;
 
   try {
     const response = yield minDelayCall(api.login, formData);
 
     // Persist token for future page loads
     const tokenName = yield select(getTokenName);
-    new Cookies().set(tokenName, response.key, { path: '/' });
+    new Cookies().set(tokenName, response.key);
 
-    yield put({ type: LOGIN_SUCCESS, ...response });
+    yield put({ type: LOGIN_SUCCESS, response, nextRoute });
   } catch (error) {
     yield put({ type: LOGIN_ERROR, error: error.response.data });
   }
