@@ -166,17 +166,14 @@ it('Test signup saga', async () => {
     .next({...mockSignupUser, key: mockToken})
     .select(getTokenName)
     .next(mockTokenName)
-    .put({
-      type: SIGNUP_SUCCESS,
-      response: {...mockSignupUser, key: mockToken},
-      nextRoute: '',
-    })
+    .put({ type: SIGNUP_SUCCESS, response: {...mockSignupUser, key: mockToken} })
     .next()
     .isDone();
 
   expect((new Cookies().set)).toHaveBeenCalledWith(
     mockTokenName,
     mockToken,
+    { path: '/' }
   );
 });
 
@@ -189,17 +186,14 @@ it('Test login saga', async () => {
     .next({...mockUser, key: mockToken})
     .select(getTokenName)
     .next(mockTokenName)
-    .put({
-      type: LOGIN_SUCCESS,
-      response: {...mockUser, key: mockToken},
-      nextRoute: '',
-    })
+    .put({ type: LOGIN_SUCCESS, response: {...mockUser, key: mockToken} })
     .next()
     .isDone();
 
   expect((new Cookies().set)).toHaveBeenCalledWith(
     mockTokenName,
     mockToken,
+    { path: '/' }
   );
 });
 

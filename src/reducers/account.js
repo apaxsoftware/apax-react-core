@@ -28,8 +28,8 @@ export default (state = initialState, action) => {
         ...state,
         signupPending: false,
         signupError: null,
-        user: action.user,
-        token: action.key,
+        user: action.response.user,
+        token: action.response.key,
       };
     case Actions.SIGNUP_ERROR:
       return {
@@ -47,8 +47,8 @@ export default (state = initialState, action) => {
         ...state,
         loginPending: false,
         loginError: null,
-        user: action.user,
-        token: action.key,
+        user: action.response.user,
+        token: action.response.key,
       };
     case Actions.LOGIN_ERROR:
       return {
