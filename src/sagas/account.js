@@ -28,8 +28,10 @@ import { minDelayCall } from './helpers';
 
 export function * doSignup (action) {
   const { formData } = action;
+
   try {
     const response = yield minDelayCall(api.signup, formData);
+    response['nextRoute'] = formData.nextRoute;
 
     // Persist token for future page loads
     const tokenName = yield select(getTokenName);
@@ -46,6 +48,7 @@ export function* doLogin (action) {
 
   try {
     const response = yield minDelayCall(api.login, formData);
+    response['nextRoute'] = formData.nextRoute;
 
     // Persist token for future page loads
     const tokenName = yield select(getTokenName);

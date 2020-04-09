@@ -88,6 +88,7 @@ export function* apiDelete (path, authenticationRequired = true) {
 
 const api = {
   login: (data) => apiPost('api/login/', data, false),
+  signup: (data) => apiPost('api/signup/', data, false),
   loadUser: () => apiGet('api/user/'),
 };
 
