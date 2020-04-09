@@ -166,7 +166,7 @@ it('Test signup saga', async () => {
     .next({...mockSignupUser, key: mockToken})
     .select(getTokenName)
     .next(mockTokenName)
-    .put({ type: SIGNUP_SUCCESS, ...mockSignupUser, key: mockToken, nextRoute: undefined, })
+    .put({ type: SIGNUP_SUCCESS, ...mockSignupUser, key: mockToken, nextRoute: undefined })
     .next()
     .isDone();
 
@@ -181,13 +181,13 @@ it('Test signup saga with nextRoute', async () => {
   testSaga(doSignup, signupAction(
     {
       ...mockSignupUser,
-      nextRoute: {path: '/',},
+      nextRoute: {path: '/'},
     }))
     .next()
     .next({...mockSignupUser, key: mockToken})
     .select(getTokenName)
     .next(mockTokenName)
-    .put({ type: SIGNUP_SUCCESS, ...mockSignupUser, key: mockToken, nextRoute: {path: '/',}, })
+    .put({ type: SIGNUP_SUCCESS, ...mockSignupUser, key: mockToken, nextRoute: {path: '/'} })
     .next()
     .isDone();
 
@@ -207,7 +207,7 @@ it('Test login saga', async () => {
     .next({...mockUser, key: mockToken})
     .select(getTokenName)
     .next(mockTokenName)
-    .put({ type: LOGIN_SUCCESS, ...mockUser, key: mockToken, nextRoute: undefined, })
+    .put({ type: LOGIN_SUCCESS, ...mockUser, key: mockToken, nextRoute: undefined })
     .next()
     .isDone();
 
@@ -222,13 +222,13 @@ it('Test login saga', async () => {
   testSaga(doLogin, loginAction(
     {
       ...mockUser,
-      nextRoute: {path: '/',},
+      nextRoute: {path: '/'},
     }))
     .next()
     .next({...mockUser, key: mockToken})
     .select(getTokenName)
     .next(mockTokenName)
-    .put({ type: LOGIN_SUCCESS, ...mockUser, key: mockToken, nextRoute: {path: '/',}, })
+    .put({ type: LOGIN_SUCCESS, ...mockUser, key: mockToken, nextRoute: {path: '/'} })
     .next()
     .isDone();
 

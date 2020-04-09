@@ -6,7 +6,6 @@ import {
   select,
 } from 'redux-saga/effects';
 import Cookies from 'universal-cookie';
-import * as _ from 'lodash';
 
 import {
   LOGIN,
