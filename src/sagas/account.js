@@ -32,16 +32,13 @@ export function * doSignup (action) {
 
   try {
     const response = yield minDelayCall(api.signup, formData);
-
-    if (_.has(formData, 'nextRoute.path')) {
-      _.assign(response, {nextRoute: formData.nextRoute});
-    }
+    response['nextRoute'] = formData.nextRoute;
 
     // Persist token for future page loads
     const tokenName = yield select(getTokenName);
     new Cookies().set(tokenName, response.key, { path: '/' });
 
-    yield put({ type: SIGNUP_SUCCESS, response });
+    yield put({ type: SIGNUP_SUCCESS, ...response });
   } catch (error) {
     yield put({ type: SIGNUP_ERROR, error: error.response.data });
   }
@@ -52,16 +49,13 @@ export function* doLogin (action) {
 
   try {
     const response = yield minDelayCall(api.login, formData);
-
-    if (_.has(formData, 'nextRoute.path')) {
-      _.assign(response, {nextRoute: formData.nextRoute});
-    }
+    response['nextRoute'] = formData.nextRoute;
 
     // Persist token for future page loads
     const tokenName = yield select(getTokenName);
     new Cookies().set(tokenName, response.key, { path: '/' });
 
-    yield put({ type: LOGIN_SUCCESS, response });
+    yield put({ type: LOGIN_SUCCESS, ...response });
   } catch (error) {
     yield put({ type: LOGIN_ERROR, error: error.response.data });
   }
