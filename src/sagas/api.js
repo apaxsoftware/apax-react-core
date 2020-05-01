@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { call, select } from 'redux-saga/effects';
 
-import { getToken } from '../selectors/account';
+import { getToken, getTokenType } from '../selectors/account';
 import { getApiRoot } from '../selectors/env';
 
 export function* getHeaders (authenticationRequired) {
@@ -11,9 +11,10 @@ export function* getHeaders (authenticationRequired) {
 
   if (authenticationRequired) {
     const token = yield select(getToken);
+    const token_type = yield select(getTokenType);
 
     if (token) {
-      headers.Authorization = `Token ${token}`;
+      headers.Authorization = `${token_type} ${token}`;
     }
   }
 

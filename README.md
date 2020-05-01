@@ -8,6 +8,24 @@ Available functionality includes handling user account signup and login to DRF b
 
 ## Usage
 
+### Connecting Locally
+To connect to this repository locally, go to the root directory for apax-react-core:
+
+```
+yarn link
+```
+
+Then go to the project you want to connect (at the root level) and enter:
+```
+yarn link apax-react-core
+```
+
+To separate the projects again:
+```
+yarn unlink
+```
+inside apax-react-core level terminal.
+
 ### Initialize Environment
 
 This library requires a bit of configuration before it can be used. To do this, dispatch the following

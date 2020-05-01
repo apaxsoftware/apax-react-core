@@ -15,6 +15,7 @@ export default (state = initialState, action) => {
         api_domain: action.api_domain,
         api_root: action.api_root,
         token_name: action.token_name,
+        token_type: action.token_type,
       };
 
     default:

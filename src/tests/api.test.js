@@ -11,10 +11,11 @@ import {
   apiDelete,
 } from '../sagas/api';
 
-import { getToken } from '../selectors/account';
+import { getToken, getTokenType } from '../selectors/account';
 import { getApiRoot } from '../selectors/env';
 
 const mockToken = 'mock_token';
+const mockTokenType = 'Token';
 const mockApiRoot = 'http://testserver.com';
 
 const mockLogin = { email: 'test@test.com', password: 'password' };
@@ -28,7 +29,7 @@ const mockHeadersWithoutAuth = {
 const mockHeadersWithAuth = {
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': `Token ${mockToken}`,
+    'Authorization': `${mockTokenType} ${mockToken}`,
   },
 };
 
@@ -47,6 +48,8 @@ it('Test get headers with authentication', async () => {
     .next()
     .select(getToken)
     .next(mockToken)
+    .select(getTokenType)
+    .next(mockTokenType)
     .returns(mockHeadersWithAuth)
     .next()
     .isDone();
