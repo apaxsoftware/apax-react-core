@@ -4,6 +4,7 @@ const initialState = {
   api_domain: '',
   api_root: '',
   token_name: '',
+  token_type: '',
 };
 
 export default (state = initialState, action) => {
