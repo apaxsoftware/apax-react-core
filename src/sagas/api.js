@@ -1,16 +1,14 @@
 import axios from 'axios';
 import { call, select } from 'redux-saga/effects';
 
-import { getToken, getTokenType } from '../selectors/account';
-import { getApiRoot } from '../selectors/env';
+import { getApiRoot, getTokenType } from '../selectors/env';
 
-export function* getHeaders (authenticationRequired) {
+export function* getHeaders (authenticationRequired, token) {
   const headers = {
     'Content-Type': 'application/json',
   };
 
   if (authenticationRequired) {
-    const token = yield select(getToken);
     const token_type = yield select(getTokenType);
 
     if (token) {
@@ -21,8 +19,8 @@ export function* getHeaders (authenticationRequired) {
   return { headers };
 }
 
-export function* apiPost (path, data, authenticationRequired = true) {
-  const headers = yield call(getHeaders, authenticationRequired);
+export function* apiPost (path, data, authenticationRequired = true, token = null) {
+  const headers = yield call(getHeaders, authenticationRequired, token);
   const apiRoot = yield select(getApiRoot);
 
   return yield axios.post(
@@ -32,8 +30,8 @@ export function* apiPost (path, data, authenticationRequired = true) {
   ).then((res) => res.data);
 }
 
-export function* apiGet (path, data, authenticationRequired = true) {
-  const headers = yield call(getHeaders, authenticationRequired);
+export function* apiGet (path, data, authenticationRequired = true, token = null) {
+  const headers = yield call(getHeaders, authenticationRequired, token);
   const apiRoot = yield select(getApiRoot);
 
   let url = `${apiRoot}/${path}`;
@@ -49,8 +47,8 @@ export function* apiGet (path, data, authenticationRequired = true) {
   ).then((res) => res.data);
 }
 
-export function* apiPut (path, data, authenticationRequired = true) {
-  const headers = yield call(getHeaders, authenticationRequired);
+export function* apiPut (path, data, authenticationRequired = true, token = null) {
+  const headers = yield call(getHeaders, authenticationRequired, token);
   const apiRoot = yield select(getApiRoot);
 
   let url = `${apiRoot}/${path}`;
@@ -62,8 +60,8 @@ export function* apiPut (path, data, authenticationRequired = true) {
   ).then((res) => res.data);
 }
 
-export function* apiPatch (path, data, authenticationRequired = true) {
-  const headers = yield call(getHeaders, authenticationRequired);
+export function* apiPatch (path, data, authenticationRequired = true, token = null) {
+  const headers = yield call(getHeaders, authenticationRequired, token);
   const apiRoot = yield select(getApiRoot);
 
   let url = `${apiRoot}/${path}`;
@@ -75,8 +73,8 @@ export function* apiPatch (path, data, authenticationRequired = true) {
   ).then((res) => res.data);
 }
 
-export function* apiDelete (path, authenticationRequired = true) {
-  const headers = yield call(getHeaders, authenticationRequired);
+export function* apiDelete (path, authenticationRequired = true, token = null) {
+  const headers = yield call(getHeaders, authenticationRequired, token);
   const apiRoot = yield select(getApiRoot);
 
   let url = `${apiRoot}/${path}`;
