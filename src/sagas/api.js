@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { call, select } from 'redux-saga/effects';
 
-import { getToken, getTokenType } from '../selectors/account';
-import { getApiRoot } from '../selectors/env';
+import { getToken } from '../selectors/account';
+import { getApiRoot, getTokenType } from '../selectors/env';
 
 export function* getHeaders (authenticationRequired) {
   const headers = {
@@ -90,6 +90,7 @@ export function* apiDelete (path, authenticationRequired = true) {
 const api = {
   login: (data) => apiPost('api/login/', data, false),
   signup: (data) => apiPost('api/signup/', data, false),
+  patchUser: (data, path = 'api/user/') => apiPatch(path, data),
   loadUser: () => apiGet('api/user/'),
 };
 

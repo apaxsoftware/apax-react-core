@@ -9,6 +9,7 @@ export const initialState = {
   loginError: null,
   signupPending: false,
   signupError: null,
+  patchUserError: null,
 };
 
 export default (state = initialState, action) => {
@@ -55,6 +56,24 @@ export default (state = initialState, action) => {
         ...state,
         loginPending: false,
         loginError: action.error,
+      };
+    case Actions.PATCH_USER:
+      return {
+        ...state,
+        userLoading: true,
+      };
+    case Actions.PATCH_USER_SUCCESS:
+      return {
+        ...state,
+        userLoading: false,
+        patchUserError: null,
+        user: action.response,
+      };
+    case Actions.PATCH_USER_ERROR:
+      return {
+        ...state,
+        userLoading: false,
+        patchUserError: action.error,
       };
     case Actions.LOAD_USER:
       return {
