@@ -5,6 +5,7 @@ import {
   doLogin,
   doSignup,
   loadUser,
+  doPatchUser,
 } from '../sagas/account';
 import { getUser } from '../selectors/account';
 import { getTokenName } from '../selectors/env';
@@ -12,16 +13,20 @@ import {
   login as loginAction,
   logout as logoutAction,
   signup as signupAction,
+  patchUser as patchUserAction,
   setUserToken,
   LOGIN,
   SIGNUP,
   SIGNUP_SUCCESS,
+  SIGNUP_ERROR,
   LOGIN_SUCCESS,
   LOGIN_ERROR,
   LOGOUT,
   LOAD_USER,
   LOAD_USER_ERROR,
   LOAD_USER_SUCCESS,
+  PATCH_USER_SUCCESS,
+  PATCH_USER_ERROR,
 } from '../actions/account';
 
 const mockUser = {
@@ -37,6 +42,10 @@ const mockSignupUser = {
   email: 'test1@test.com',
   password1: 'password',
   password2: 'password',
+};
+
+const mockPatchUser = {
+  name: 'Test2',
 };
 
 // Mock the entire cookies module (Cookies.*)
@@ -177,6 +186,20 @@ it('Test signup saga', async () => {
   );
 });
 
+it('Test signup saga with error', async () => {
+  const fakeError = new Error();
+  fakeError.response = {
+    data: 'Some error happend',
+  };
+
+  testSaga(doSignup, signupAction(mockSignupUser))
+    .next()
+    .throw(fakeError)
+    .put({ type: SIGNUP_ERROR, error: fakeError.response.data})
+    .next()
+    .isDone();
+});
+
 it('Test signup saga with nextRoute', async () => {
   testSaga(doSignup, signupAction(
     {
@@ -294,4 +317,29 @@ it('Test load user with error', async () => {
 
   // Verify current token was cleared
   expect((new Cookies()).remove).toHaveBeenCalled();
+});
+
+it('Test doPatchUser saga', async () => {
+  testSaga(doPatchUser, mockPatchUser)
+    // Call patch user action
+    .next(patchUserAction(mockPatchUser))
+    .next(mockPatchUser)
+    // Saga triggers PATCH_USER_SUCCESS
+    .put({ type: PATCH_USER_SUCCESS, response: mockPatchUser })
+    .next()
+    .isDone();
+});
+
+it('Test patch user saga with error', async () => {
+  const fakeError = new Error();
+  fakeError.response = {
+    data: 'Some error happend',
+  };
+
+  testSaga(doPatchUser, patchUserAction(mockPatchUser))
+    .next()
+    .throw(fakeError)
+    .put({ type: PATCH_USER_ERROR, error: fakeError.response.data})
+    .next()
+    .isDone();
 });

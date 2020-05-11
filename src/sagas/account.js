@@ -3,6 +3,7 @@ import {
   call,
   put,
   take,
+  takeEvery,
   select,
 } from 'redux-saga/effects';
 import Cookies from 'universal-cookie';
@@ -18,6 +19,9 @@ import {
   LOAD_USER_SUCCESS,
   LOAD_USER_ERROR,
   LOGOUT,
+  PATCH_USER,
+  PATCH_USER_SUCCESS,
+  PATCH_USER_ERROR,
   setUserToken,
 } from '../actions/account';
 
@@ -82,6 +86,18 @@ export function* loadUser (token) {
   }
 }
 
+export function* doPatchUser (action) {
+  const { formData } = action;
+  
+  try {
+    const response = yield call(api.patchUser, formData);
+
+    yield put({ type: PATCH_USER_SUCCESS, response });
+  } catch (error) {
+    yield put({ type: PATCH_USER_ERROR, error: error.response.data });
+  }
+}
+
 // Finite state machine for user session
 export function* loginFlow () {
   while(true) {
@@ -117,5 +133,6 @@ export function* loginFlow () {
 export default function* () {
   yield all([
     loginFlow(),
+    takeEvery(PATCH_USER, doPatchUser),
   ]);
 }

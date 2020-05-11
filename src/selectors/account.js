@@ -9,5 +9,3 @@ export const getToken = ({ account, env }) => {
     return null;
   }
 };
-
-export const getTokenType = ({ account }) => account ? account.token_type : 'Token';

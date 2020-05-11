@@ -11,14 +11,21 @@ import {
   apiDelete,
 } from '../sagas/api';
 
-import { getToken, getTokenType } from '../selectors/account';
-import { getApiRoot } from '../selectors/env';
+import { getToken } from '../selectors/account';
+import { getApiRoot, getTokenType } from '../selectors/env';
 
 const mockToken = 'mock_token';
 const mockTokenType = 'Token';
 const mockApiRoot = 'http://testserver.com';
 
 const mockLogin = { email: 'test@test.com', password: 'password' };
+const mockSignup = {
+  name: 'Test1',
+  email: 'test1@test.com',
+  password1: 'password',
+  password2: 'password',
+};
+const mockPatchUser = { name: 'Test2' };
 
 const mockHeadersWithoutAuth = {
   headers: {
@@ -70,6 +77,42 @@ it('Test api.login', async () => {
     `${mockApiRoot}/api/login/`,
     mockLogin,
     mockHeadersWithoutAuth
+  );
+});
+
+it('Test api.signup', async () => {
+
+  axios.post.mockImplementation(() => Promise.resolve({ data: 'success'}));
+
+  testSaga(api.signup, mockSignup)
+    .next()
+    .call(getHeaders, false)
+    .next(mockHeadersWithoutAuth)
+    .select(getApiRoot)
+    .next(mockApiRoot);
+
+  expect(axios.post).toHaveBeenCalledWith(
+    `${mockApiRoot}/api/signup/`,
+    mockSignup,
+    mockHeadersWithoutAuth
+  );
+});
+
+it('Test api.patchUser', async () => {
+
+  axios.patch.mockImplementation(() => Promise.resolve({ data: 'success'}));
+
+  testSaga(api.patchUser, mockPatchUser)
+    .next()
+    .call(getHeaders, true)
+    .next(mockHeadersWithAuth)
+    .select(getApiRoot)
+    .next(mockApiRoot);
+
+  expect(axios.patch).toHaveBeenCalledWith(
+    `${mockApiRoot}/api/user/`,
+    mockPatchUser,
+    mockHeadersWithAuth
   );
 });
 
