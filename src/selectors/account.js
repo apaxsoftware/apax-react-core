@@ -1,4 +1,6 @@
-export const getUser = ({ account }) =>  account ? account.user : null;
+import Cookies from 'universal-cookie';
+
+export const getUser = ({ account }) => account ? account.user : null;
 
 export const getToken = ({ account, env }) => {
   if (!!account.token) {
