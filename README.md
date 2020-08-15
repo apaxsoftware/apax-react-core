@@ -1,14 +1,15 @@
 # apax-react-core
+
 [![Build Status](https://travis-ci.org/apaxsoftware/apax-react-core.svg?branch=master)](https://travis-ci.org/apaxsoftware/apax-react-core)
 
 Contains core react functionality developed by Apax Software LLC
 
 Available functionality includes handling user account signup and login to DRF backends.
 
-
 ## Usage
 
 ### Connecting Locally
+
 To connect to this repository locally, go to the root directory for apax-react-core:
 
 ```
@@ -16,14 +17,17 @@ yarn link
 ```
 
 Then go to the project you want to connect (at the root level) and enter:
+
 ```
 yarn link apax-react-core
 ```
 
 To separate the projects again:
+
 ```
 yarn unlink
 ```
+
 inside apax-react-core level terminal.
 
 ### Initialize Environment
@@ -67,6 +71,7 @@ export const rootReducer = combineReducers({
 ```
 
 #### Environment Options
+
 ```
 {
   // Domain name of backing server
@@ -160,26 +165,54 @@ export default function Signup() {
 
 The following API methods are available:
 
-`apiGet(path, data, authenticationRequired = true)`
+`apiGet(path, data|options, authenticationRequired = true)`
 
-`apiPost(path, data, authenticationRequired = true)`
+`apiPost(path, data|options, authenticationRequired = true)`
 
-`apiPut(path, data, authenticationRequired = true)`
+`apiPut(path, data|options, authenticationRequired = true)`
 
-`apiPatch(path, data, authenticationRequired = true)`
+`apiPatch(path, data|options, authenticationRequired = true)`
 
 `apiDelete(path, authenticationRequired = true)`
 
-#### Usage
-```
-import {
-  apiGet
-} from 'apax-react-core';
+`data`:
 
+```
+{
+  requestParam1: value,
+  requestParam2: value,
+  ...
+}
+```
+
+To add custom headers use `options` format:
+
+```
+{
+  data: {
+    requestParam1: value,
+    requestParam2: value,
+    ...
+  },
+  headers: {
+    'Custom-Header': 'Header Value',
+    ...
+  }
+}
+```
+
+#### Usage
+
+```
+
+import {
+apiGet
+} from 'apax-react-core';
 
 ...
 
 const response = yield apiGet('api/mypath/');
+
 ```
 
 ## License
@@ -205,3 +238,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+```
+
+```
