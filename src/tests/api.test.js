@@ -85,8 +85,8 @@ it('Test api.login', async () => {
 
   expect(axios.post).toHaveBeenCalledWith(
     `${mockApiRoot}/api/login/`,
+    mockLogin,
     {
-      'data': mockLogin,
       'headers': mockHeadersWithoutAuth,
     }
   );
@@ -105,8 +105,8 @@ it('Test api.signup', async () => {
 
   expect(axios.post).toHaveBeenCalledWith(
     `${mockApiRoot}/api/signup/`,
+    mockSignup,
     {
-      'data': mockSignup,
       'headers': mockHeadersWithoutAuth,
     }
   );
@@ -125,8 +125,8 @@ it('Test api.patchUser', async () => {
 
   expect(axios.patch).toHaveBeenCalledWith(
     `${mockApiRoot}/api/user/`,
+    mockPatchUser,
     {
-      'data': mockPatchUser,
       'headers': mockHeadersWithAuth,
     }
   );
@@ -166,8 +166,8 @@ it('Test apiPost', async () => {
 
   expect(axios.post).toHaveBeenCalledWith(
     `${mockApiRoot}/${testUrl}`,
+    testData,
     {
-      'data': testData,
       'headers': mockHeadersWithAuth,
     }
   );
@@ -237,8 +237,8 @@ it('Test apiPut', async () => {
 
   expect(axios.put).toHaveBeenCalledWith(
     `${mockApiRoot}/${testUrl}`,
+    testData,
     {
-      'data': testData,
       'headers': mockHeadersWithAuth,
     }
   );
@@ -260,8 +260,8 @@ it('Test apiPatch', async () => {
 
   expect(axios.patch).toHaveBeenCalledWith(
     `${mockApiRoot}/${testUrl}`,
+    testData,
     {
-      'data': testData,
       'headers': mockHeadersWithAuth,
     }
   );
@@ -275,7 +275,7 @@ it('Test apiDelete', async () => {
 
   testSaga(apiDelete, testUrl, true)
     .next()
-    .call(getHeaders, true)
+    .call(getHeaders, { authenticationRequired: true })
     .next(mockHeadersWithAuth)
     .select(getApiRoot)
     .next(mockApiRoot);

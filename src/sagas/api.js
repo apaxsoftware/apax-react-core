@@ -9,19 +9,31 @@ import * as _ from 'lodash';
 const parseOptions = (options) => {
   let data = null;
   let customHeaders = undefined;
+  let authenticationRequired = true;
 
-  if (_.has(options, 'data')) {
-    data = _.get(options, 'data');
+  let hasData = _.has(options, 'data');
+  let hasHeaders = _.has(options, 'headers');
+  let hasAuthRequired = _.has(options, 'authenticationRequired');
 
-    if (_.has(options, 'headers')) {
+  if (hasData || hasHeaders || hasAuthRequired ) {
+
+    if (hasData) {
+      data = _.get(options, 'data');
+    }
+
+    if (hasHeaders) {
       customHeaders = _.get(options, 'headers');
+    }
+
+    if (hasAuthRequired) {
+      authenticationRequired = _.get(options, 'authenticationRequired');
     }
 
   } else {
     data = options;
   }
 
-  return { data, customHeaders };
+  return { data, customHeaders, authenticationRequired };
 };
 
 export function* getHeaders (options) {
@@ -29,7 +41,7 @@ export function* getHeaders (options) {
     'Content-Type': 'application/json',
   };
 
-  const authenticationRequired = _.get(options, 'authenticationRequired', false);
+  const authenticationRequired = _.get(options, 'authenticationRequired', true);
   const customHeaders = _.get(options, 'customHeaders', {});
 
   if (authenticationRequired) {
@@ -44,25 +56,25 @@ export function* getHeaders (options) {
   return _.merge({}, headers, customHeaders);
 }
 
-export function* apiPost (path, options, authenticationRequired = true) {
+export function* apiPost (path, options) {
 
-  const { data, customHeaders } = parseOptions(options);
+  const { data, customHeaders, authenticationRequired } = parseOptions(options);
 
   const headers = yield call(getHeaders, {authenticationRequired, customHeaders});
   const apiRoot = yield select(getApiRoot);
 
   return yield axios.post(
     `${apiRoot}/${path}`,
+    data,
     {
-      data,
       headers,
     }
   ).then((res) => res.data);
 }
 
-export function* apiGet (path, options = {}, authenticationRequired = true) {
+export function* apiGet (path, options = {}) {
 
-  const { data, customHeaders } = parseOptions(options);
+  const { data, customHeaders, authenticationRequired } = parseOptions(options);
 
   const headers = yield call(getHeaders, { authenticationRequired, customHeaders });
   const apiRoot = yield select(getApiRoot);
@@ -82,8 +94,8 @@ export function* apiGet (path, options = {}, authenticationRequired = true) {
   ).then((res) => res.data);
 }
 
-export function* apiPut (path, options, authenticationRequired = true) {
-  const { data, customHeaders } = parseOptions(options);
+export function* apiPut (path, options) {
+  const { data, customHeaders, authenticationRequired } = parseOptions(options);
 
   const headers = yield call(getHeaders, { authenticationRequired, customHeaders });
   const apiRoot = yield select(getApiRoot);
@@ -92,15 +104,15 @@ export function* apiPut (path, options, authenticationRequired = true) {
 
   return yield axios.put(
     url,
+    data,
     {
-      data,
       headers,
     }
   ).then((res) => res.data);
 }
 
-export function* apiPatch (path, options, authenticationRequired = true) {
-  const { data, customHeaders } = parseOptions(options);
+export function* apiPatch (path, options) {
+  const { data, customHeaders, authenticationRequired } = parseOptions(options);
 
   const headers = yield call(getHeaders, { authenticationRequired, customHeaders });
   const apiRoot = yield select(getApiRoot);
@@ -109,15 +121,15 @@ export function* apiPatch (path, options, authenticationRequired = true) {
 
   return yield axios.patch(
     url,
+    data,
     {
-      data,
       headers,
     }
   ).then((res) => res.data);
 }
 
 export function* apiDelete (path, authenticationRequired = true) {
-  const headers = yield call(getHeaders, authenticationRequired);
+  const headers = yield call(getHeaders, { authenticationRequired });
   const apiRoot = yield select(getApiRoot);
 
   let url = `${apiRoot}/${path}`;
@@ -129,9 +141,9 @@ export function* apiDelete (path, authenticationRequired = true) {
 }
 
 const api = {
-  login: (data) => apiPost('api/login/', data, false),
-  signup: (data) => apiPost('api/signup/', data, false),
-  patchUser: (data, path = 'api/user/') => apiPatch(path, data),
+  login: (data) => apiPost('api/login/', { data, authenticationRequired: false }),
+  signup: (data) => apiPost('api/signup/', { data, authenticationRequired: false }),
+  patchUser: (data, path = 'api/user/') => apiPatch(path, { data }),
   loadUser: () => apiGet('api/user/'),
 };
 

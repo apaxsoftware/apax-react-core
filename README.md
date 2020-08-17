@@ -165,39 +165,45 @@ export default function Signup() {
 
 The following API methods are available:
 
-`apiGet(path, data|options, authenticationRequired = true)`
+`apiGet(path, data|options)`
 
-`apiPost(path, data|options, authenticationRequired = true)`
+`apiPost(path, data|options)`
 
-`apiPut(path, data|options, authenticationRequired = true)`
+`apiPut(path, data|options)`
 
-`apiPatch(path, data|options, authenticationRequired = true)`
+`apiPatch(path, data|options)`
 
 `apiDelete(path, authenticationRequired = true)`
 
-`data`:
+#### Options
+
+Default options for the `apiGet`, `apiPost`, `apiPut`, and `apiPatch` methods can be overridden using
+the format below (all fields are optional):
+
+**Note:** When overriding options, request `data` must be passed along inside of `options`.
 
 ```
 {
-  requestParam1: value,
-  requestParam2: value,
-  ...
-}
-```
+  /*
+    Request data
 
-To add custom headers use `options` format:
+    default: null
+  */
+  data: object,
 
-```
-{
-  data: {
-    requestParam1: value,
-    requestParam2: value,
-    ...
-  },
-  headers: {
-    'Custom-Header': 'Header Value',
-    ...
-  }
+  /*
+    Extra headers to include with the request (key/value pairs)
+
+    default: undefined
+  */
+  headers: object,
+
+  /*
+   Should request include authentication headers
+
+   default: true
+  */
+  authenticationRequired: boolean,
 }
 ```
 
@@ -238,7 +244,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-```
-
-```
