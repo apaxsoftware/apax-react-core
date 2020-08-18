@@ -11,9 +11,9 @@ const parseOptions = (options) => {
   let customHeaders = undefined;
   let authenticationRequired = true;
 
-  let hasData = _.has(options, 'data');
-  let hasHeaders = _.has(options, 'headers');
-  let hasAuthRequired = _.has(options, 'authenticationRequired');
+  const hasData = _.has(options, 'data');
+  const hasHeaders = _.has(options, 'headers');
+  const hasAuthRequired = _.has(options, 'authenticationRequired');
 
   if (hasData || hasHeaders || hasAuthRequired ) {
 
