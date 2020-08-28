@@ -27,7 +27,7 @@ import {
 } from '../actions/account';
 
 import api from './api';
-import { getUser } from '../selectors/account';
+import { getUser, getToken } from '../selectors/account';
 import { getTokenName } from '../selectors/env';
 import { minDelayCall } from './helpers';
 
@@ -75,7 +75,7 @@ export function* loadUser ( token = null ) {
       yield put(setUserToken(token));
     }
 
-    if (yield select((s) => s.account.token)) {
+    if (yield select(getToken)) {
       const user = yield minDelayCall(api.loadUser);
 
       yield put({ type: LOAD_USER_SUCCESS, user});
