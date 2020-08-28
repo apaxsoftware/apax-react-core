@@ -161,6 +161,36 @@ export default function Signup() {
 }
 ```
 
+### Persistent Login
+
+By default `apax-react-core` will store the users token as a cookie after login. However, there may be some cases where
+cookie storage is unavailable (such as React-Native environments) and so users logged in state will not persist between app loads.
+
+This can be solved by storing the user token in the app (returned as `key` from `LOGIN_SUCCESS` or `SIGNUP_SUCCESS`) and then
+triggering a `SET_USER_TOKEN` action when the app first loads. This action will set the user token and trigger a call to `LOAD_USER`,
+effectively logging in the user.
+
+#### Example
+
+```
+function* persistLogin() {
+  const user = yield select(getUser);
+
+  if (!user) {
+    const token = yield AsyncStorage.getItem(USER_TOKEN_KEY);
+
+    if (token) {
+      yield put(setUserToken(token));
+    } else {
+      // Wait for login or signup and store the token in local storage
+      const { key } = yield take([LOGIN_SUCCESS, SIGNUP_SUCCESS]);
+
+      yield AsyncStorage.setItem(USER_TOKEN_KEY, key);
+    }
+  }
+}
+```
+
 ### API
 
 The following API methods are available:
