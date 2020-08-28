@@ -23,6 +23,7 @@ import {
   PATCH_USER_SUCCESS,
   PATCH_USER_ERROR,
   setUserToken,
+  SET_USER_TOKEN,
 } from '../actions/account';
 
 import api from './api';
@@ -64,7 +65,7 @@ export function* doLogin (action) {
   }
 }
 
-export function* loadUser (token) {
+export function* loadUser ( token = null ) {
   // Set user loading
   yield put({ type: LOAD_USER });
 
@@ -74,9 +75,14 @@ export function* loadUser (token) {
       yield put(setUserToken(token));
     }
 
-    const user = yield minDelayCall(api.loadUser);
+    if (yield select((s) => s.account.token)) {
+      const user = yield minDelayCall(api.loadUser);
 
-    yield put({ type: LOAD_USER_SUCCESS, user});
+      yield put({ type: LOAD_USER_SUCCESS, user});
+    } else {
+      yield put({ type: LOAD_USER_ERROR });
+    }
+
   } catch (error) {
     // Token is bogus. Remove it.
     const tokenName = yield select(getTokenName);
@@ -88,7 +94,7 @@ export function* loadUser (token) {
 
 export function* doPatchUser (action) {
   const { formData } = action;
-  
+
   try {
     const response = yield call(api.patchUser, formData);
 
@@ -112,11 +118,18 @@ export function* loginFlow () {
 
     if (!(yield select(getUser))) {
       // Wait for login / signup if we don't have a user
-      const action = yield take([LOGIN, SIGNUP]);
-      if (action.type === LOGIN) {
-        yield call(doLogin, action);
-      } else {
-        yield call(doSignup, action);
+      const action = yield take([LOGIN, SIGNUP, SET_USER_TOKEN]);
+
+      switch (action.type) {
+        case LOGIN:
+          yield call(doLogin, action);
+          break;
+        case SIGNUP:
+          yield call(doSignup, action);
+          break;
+        case SET_USER_TOKEN:
+          yield call(loadUser);
+
       }
     }
 
