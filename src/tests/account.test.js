@@ -7,7 +7,7 @@ import {
   loadUser,
   doPatchUser,
 } from '../sagas/account';
-import { getUser } from '../selectors/account';
+import { getUser, getToken } from '../selectors/account';
 import { getTokenName } from '../selectors/env';
 import {
   login as loginAction,
@@ -27,6 +27,7 @@ import {
   LOAD_USER_SUCCESS,
   PATCH_USER_SUCCESS,
   PATCH_USER_ERROR,
+  SET_USER_TOKEN,
 } from '../actions/account';
 
 const mockUser = {
@@ -71,7 +72,7 @@ it('Test loginFlow saga', async () => {
     .select(getUser)
     .next()
     // No user found, Saga waits for login or signup
-    .take([LOGIN, SIGNUP])
+    .take([LOGIN, SIGNUP, SET_USER_TOKEN])
     // Trigger login action
     .next(loginAction({
       email: mockUser.email,
@@ -151,13 +152,38 @@ it('Test loginFlow with signup', async () => {
     .select(getUser)
     .next()
     // No user found, Saga waits for login or signup
-    .take([LOGIN, SIGNUP])
+    .take([LOGIN, SIGNUP, SET_USER_TOKEN])
     // Trigger login action
     .next(signupAction({...mockSignupUser}))
-    // Saga calls login
+    // Saga calls signup
     .call(doSignup, signupAction(
       {...mockSignupUser})
     )
+    .next()
+    .select(getUser)
+    .next(mockUser)
+    // Saga settles and waits for LOGOUT
+    .take(LOGOUT);
+
+});
+
+it('Test loginFlow with set token', async () => {
+
+  (new Cookies()).get.mockReturnValue(null);
+
+  testSaga(loginFlow)
+    .next()
+    .select(getTokenName)
+    .next(mockToken)
+    // Saga attempts to load user
+    .select(getUser)
+    .next()
+    // No user found, Saga waits for login or signup
+    .take([LOGIN, SIGNUP, SET_USER_TOKEN])
+    // Trigger login action
+    .next(setUserToken(mockToken))
+    // Saga calls login
+    .call(loadUser)
     .next()
     .select(getUser)
     .next(mockUser)
@@ -289,6 +315,8 @@ it('Test load user', async () => {
     .next()
     .put(setUserToken(mockToken))
     .next()
+    .select(getToken)
+    .next(mockToken)
     // Mock user returned
     .next(mockUser)
     // Saga triggers LOAD_USER_SUCCESS
