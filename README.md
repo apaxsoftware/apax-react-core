@@ -1,6 +1,6 @@
 # apax-react-core
 
-[![Build Status](https://travis-ci.org/apaxsoftware/apax-react-core.svg?branch=master)](https://travis-ci.org/apaxsoftware/apax-react-core)
+[![Build Status](https://travis-ci.com/apaxsoftware/apax-react-core.svg?branch=master)](https://travis-ci.com/apaxsoftware/apax-react-core)
 
 Contains core react functionality developed by Apax Software LLC
 
