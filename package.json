@@ -24,7 +24,7 @@
     "lint": "eslint ./src --ext .js --ignore-pattern node_modules"
   },
   "peerDependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "lodash": "^4.17.15",
     "prop-types": "^15.5.4",
     "react": "^15.0.0 || ^16.0.0",
@@ -39,7 +39,7 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.4.0",
     "@testing-library/user-event": "^7.2.1",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "@svgr/rollup": "^2.4.1",
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.5",
