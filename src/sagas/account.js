@@ -7,6 +7,7 @@ import {
   select,
 } from 'redux-saga/effects';
 import Cookies from 'universal-cookie';
+import * as _ from 'lodash';
 
 import {
   LOGIN,
@@ -44,7 +45,7 @@ export function * doSignup (action) {
 
     yield put({ type: SIGNUP_SUCCESS, ...response });
   } catch (error) {
-    yield put({ type: SIGNUP_ERROR, error: error.response.data });
+    yield put({ type: SIGNUP_ERROR, error: _.get(error, 'response.data', error) });
   }
 }
 
@@ -61,7 +62,7 @@ export function* doLogin (action) {
 
     yield put({ type: LOGIN_SUCCESS, ...response });
   } catch (error) {
-    yield put({ type: LOGIN_ERROR, error: error.response.data });
+    yield put({ type: LOGIN_ERROR, error: _.get(error, 'response.data', error) });
   }
 }
 
@@ -100,7 +101,7 @@ export function* doPatchUser (action) {
 
     yield put({ type: PATCH_USER_SUCCESS, response });
   } catch (error) {
-    yield put({ type: PATCH_USER_ERROR, error: error.response.data });
+    yield put({ type: PATCH_USER_ERROR, error: _.get(error, 'response.data', error) });
   }
 }
 
