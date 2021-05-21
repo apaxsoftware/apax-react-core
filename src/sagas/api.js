@@ -69,7 +69,7 @@ export function* apiPost (path, options) {
     {
       headers,
     }
-  ).then((res) => res.data);
+  ).then((res) => _.get(res, 'data', res));
 }
 
 export function* apiGet (path, options = {}) {
@@ -91,7 +91,7 @@ export function* apiGet (path, options = {}) {
     {
       headers,
     }
-  ).then((res) => res.data);
+  ).then((res) => _.get(res, 'data', res));
 }
 
 export function* apiPut (path, options) {
@@ -108,7 +108,7 @@ export function* apiPut (path, options) {
     {
       headers,
     }
-  ).then((res) => res.data);
+  ).then((res) => _.get(res, 'data', res));
 }
 
 export function* apiPatch (path, options) {
@@ -125,7 +125,7 @@ export function* apiPatch (path, options) {
     {
       headers,
     }
-  ).then((res) => res.data);
+  ).then((res) => _.get(res, 'data', res));
 }
 
 export function* apiDelete (path, authenticationRequired = true) {
@@ -137,7 +137,7 @@ export function* apiDelete (path, authenticationRequired = true) {
   return yield axios.delete(
     url,
     headers,
-  ).then((res) => res.data);
+  ).then((res) => _.get(res, 'data', res));
 }
 
 const api = {
