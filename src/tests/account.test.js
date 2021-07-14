@@ -37,16 +37,39 @@ const mockUser = {
   password: 'mockPa$$word',
 };
 
+const mockUserResponse = {
+  status: 200,
+  data: {
+    id: 1,
+    name: 'Mock User',
+    email: 'mock.user@test.com',
+    password: 'mockPa$$word',
+  },
+};
+
 const mockSignupUser = {
-  id: 2,
-  name: 'Test1',
-  email: 'test1@test.com',
-  password1: 'password',
-  password2: 'password',
+  status: 200,
+  data: {
+    id: 2,
+    name: 'Test1',
+    email: 'test1@test.com',
+    password1: 'password',
+    password2: 'password',
+  },
 };
 
 const mockPatchUser = {
-  name: 'Test2',
+  status: 200,
+  data: {
+    name: 'Test2',
+  },
+};
+
+const mockPatchUserError = {
+  status: 401,
+  data: {
+    name: 'Some API error',
+  },
 };
 
 // Mock the entire cookies module (Cookies.*)
@@ -253,10 +276,10 @@ it('Test login saga', async () => {
       ...mockUser,
     }))
     .next()
-    .next({...mockUser, key: mockToken})
+    .next({...mockUserResponse, key: mockToken})
     .select(getTokenName)
     .next(mockTokenName)
-    .put({ type: LOGIN_SUCCESS, ...mockUser, key: mockToken, nextRoute: undefined })
+    .put({ type: LOGIN_SUCCESS, ...mockUserResponse, key: mockToken, nextRoute: undefined })
     .next()
     .isDone();
 
@@ -274,10 +297,10 @@ it('Test login saga', async () => {
       nextRoute: {path: '/'},
     }))
     .next()
-    .next({...mockUser, key: mockToken})
+    .next({...mockUserResponse, key: mockToken})
     .select(getTokenName)
     .next(mockTokenName)
-    .put({ type: LOGIN_SUCCESS, ...mockUser, key: mockToken, nextRoute: {path: '/'} })
+    .put({ type: LOGIN_SUCCESS, ...mockUserResponse, key: mockToken, nextRoute: {path: '/'} })
     .next()
     .isDone();
 
@@ -361,13 +384,17 @@ it('Test doPatchUser saga', async () => {
 it('Test patch user saga with error', async () => {
   const fakeError = new Error();
   fakeError.response = {
-    data: 'Some error happend',
+    status: 401,
+    data: {
+      name: 'Some API error',
+    },
   };
 
   testSaga(doPatchUser, patchUserAction(mockPatchUser))
     .next()
-    .throw(fakeError)
-    .put({ type: PATCH_USER_ERROR, error: fakeError.response.data})
+    .next(mockPatchUserError)
+    // Saga triggers PATCH_USER_ERROR
+    .put({ type: PATCH_USER_ERROR, error: mockPatchUserError.data })
     .next()
     .isDone();
 });

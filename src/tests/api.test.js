@@ -2,6 +2,7 @@ import { testSaga } from 'redux-saga-test-plan';
 import * as axios from 'axios';
 
 import {
+  validateStatus,
   getHeaders,
   default as api,
   apiPost,
@@ -88,6 +89,7 @@ it('Test api.login', async () => {
     mockLogin,
     {
       'headers': mockHeadersWithoutAuth,
+      validateStatus,
     }
   );
 });
@@ -108,6 +110,7 @@ it('Test api.signup', async () => {
     mockSignup,
     {
       'headers': mockHeadersWithoutAuth,
+      validateStatus,
     }
   );
 });
@@ -128,6 +131,7 @@ it('Test api.patchUser', async () => {
     mockPatchUser,
     {
       'headers': mockHeadersWithAuth,
+      validateStatus,
     }
   );
 });
@@ -146,6 +150,7 @@ it('Test api.loadUser', async () => {
     `${mockApiRoot}/api/user/`,
     {
       'headers': mockHeadersWithAuth,
+      validateStatus,
     }
   );
 });
@@ -169,6 +174,7 @@ it('Test apiPost', async () => {
     testData,
     {
       'headers': mockHeadersWithAuth,
+      validateStatus,
     }
   );
 });
@@ -193,6 +199,7 @@ it('Test apiGet', async () => {
     `${mockApiRoot}/${testUrlWithParams}`,
     {
       'headers': mockHeadersWithAuth,
+      validateStatus,
     }
   );
 });
@@ -217,6 +224,7 @@ it('Test apiGet with custom headers', async () => {
     `${mockApiRoot}/${testUrlWithParams}`,
     {
       'headers': mockHeadersWithAuth,
+      validateStatus,
     }
   );
 });
@@ -240,6 +248,7 @@ it('Test apiPut', async () => {
     testData,
     {
       'headers': mockHeadersWithAuth,
+      validateStatus,
     }
   );
 });
@@ -263,6 +272,7 @@ it('Test apiPatch', async () => {
     testData,
     {
       'headers': mockHeadersWithAuth,
+      validateStatus,
     }
   );
 });
