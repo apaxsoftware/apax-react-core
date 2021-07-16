@@ -36,6 +36,8 @@ const parseOptions = (options) => {
   return { data, customHeaders, authenticationRequired };
 };
 
+export const validateStatus = () => true;
+
 export function* getHeaders (options) {
   const headers = {
     'Content-Type': 'application/json',
@@ -68,8 +70,17 @@ export function* apiPost (path, options) {
     data,
     {
       headers,
+      // Always return true so error status 4xx promises aren't rejected.
+      validateStatus,
     }
-  ).then((res) => _.get(res, 'data', res));
+  ).then((res) => {
+    // If the status is not a success, return all of the response
+    if (res.status > 299) {
+      return res;
+    }
+
+    return _.get(res, 'data', res);
+  });
 }
 
 export function* apiGet (path, options = {}) {
@@ -90,8 +101,17 @@ export function* apiGet (path, options = {}) {
     url,
     {
       headers,
+      // Always return true so error status 4xx promises aren't rejected.
+      validateStatus,
     }
-  ).then((res) => _.get(res, 'data', res));
+  ).then((res) => {
+    // If the status is not a success, return all of the response
+    if (res.status > 299) {
+      return res;
+    }
+
+    return _.get(res, 'data', res);
+  });
 }
 
 export function* apiPut (path, options) {
@@ -107,8 +127,17 @@ export function* apiPut (path, options) {
     data,
     {
       headers,
+      // Always return true so error status 4xx promises aren't rejected.
+      validateStatus,
     }
-  ).then((res) => _.get(res, 'data', res));
+  ).then((res) => {
+    // If the status is not a success, return all of the response
+    if (res.status > 299) {
+      return res;
+    }
+
+    return _.get(res, 'data', res);
+  });
 }
 
 export function* apiPatch (path, options) {
@@ -124,8 +153,17 @@ export function* apiPatch (path, options) {
     data,
     {
       headers,
+      // Always return true so error status 4xx promises aren't rejected.
+      validateStatus,
     }
-  ).then((res) => _.get(res, 'data', res));
+  ).then((res) => {
+    // If the status is not a success, return all of the response
+    if (res.status > 299) {
+      return res;
+    }
+
+    return _.get(res, 'data', res);
+  });
 }
 
 export function* apiDelete (path, authenticationRequired = true) {
@@ -137,7 +175,14 @@ export function* apiDelete (path, authenticationRequired = true) {
   return yield axios.delete(
     url,
     headers,
-  ).then((res) => _.get(res, 'data', res));
+  ).then((res) => {
+    // If the status is not a success, return all of the response
+    if (res.status > 299) {
+      return res;
+    }
+
+    return _.get(res, 'data', res);
+  });
 }
 
 const api = {

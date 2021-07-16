@@ -37,13 +37,22 @@ export function * doSignup (action) {
 
   try {
     const response = yield minDelayCall(api.signup, formData);
-    response['nextRoute'] = formData.nextRoute;
 
-    // Persist token for future page loads
-    const tokenName = yield select(getTokenName);
-    new Cookies().set(tokenName, response.key, { path: '/' });
+    // If the response had an error status, but wasn't caught as an error
+    if (!response.status || response.status > 299) {
+      yield put({
+        type: SIGNUP_ERROR, 
+        error: _.get(response, 'data'),
+      });
+    } else {
+      response['nextRoute'] = formData.nextRoute;
 
-    yield put({ type: SIGNUP_SUCCESS, ...response });
+      // Persist token for future page loads
+      const tokenName = yield select(getTokenName);
+      new Cookies().set(tokenName, response.key, { path: '/' });
+
+      yield put({ type: SIGNUP_SUCCESS, ...response });
+    }
   } catch (error) {
     yield put({ type: SIGNUP_ERROR, error: _.get(error, 'response.data', error) });
   }
@@ -54,13 +63,22 @@ export function* doLogin (action) {
 
   try {
     const response = yield minDelayCall(api.login, formData);
-    response['nextRoute'] = formData.nextRoute;
 
-    // Persist token for future page loads
-    const tokenName = yield select(getTokenName);
-    new Cookies().set(tokenName, response.key, { path: '/' });
+    // If the response had an error status, but wasn't caught as an error
+    if (!response.status || response.status > 299) {
+      yield put({
+        type: LOGIN_ERROR, 
+        error: _.get(response, 'data'),
+      });
+    } else {
+      response['nextRoute'] = formData.nextRoute;
 
-    yield put({ type: LOGIN_SUCCESS, ...response });
+      // Persist token for future page loads
+      const tokenName = yield select(getTokenName);
+      new Cookies().set(tokenName, response.key, { path: '/' });
+
+      yield put({ type: LOGIN_SUCCESS, ...response });
+    }
   } catch (error) {
     yield put({ type: LOGIN_ERROR, error: _.get(error, 'response.data', error) });
   }
@@ -96,12 +114,16 @@ export function* loadUser ( token = null ) {
 export function* doPatchUser (action) {
   const { formData } = action;
 
-  try {
-    const response = yield call(api.patchUser, formData);
+  const response = yield call(api.patchUser, formData);
 
+  // If the response had an error status, but wasn't caught as an error
+  if (!response.status || response.status > 299) {
+    yield put({
+      type: PATCH_USER_ERROR,
+      error: _.get(response, 'data'),
+    });
+  } else {
     yield put({ type: PATCH_USER_SUCCESS, response });
-  } catch (error) {
-    yield put({ type: PATCH_USER_ERROR, error: _.get(error, 'response.data', error) });
   }
 }
 
