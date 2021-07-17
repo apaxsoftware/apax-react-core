@@ -39,7 +39,7 @@ export function * doSignup (action) {
     const response = yield minDelayCall(api.signup, formData);
 
     // If the response had an error status, but wasn't caught as an error
-    if (!response.status || response.status > 299) {
+    if (!_.isNil(response.status) && response.status > 299) {
       yield put({
         type: SIGNUP_ERROR, 
         error: _.get(response, 'data'),
@@ -65,7 +65,7 @@ export function* doLogin (action) {
     const response = yield minDelayCall(api.login, formData);
 
     // If the response had an error status, but wasn't caught as an error
-    if (!response.status || response.status > 299) {
+    if (!_.isNil(response.status) && response.status > 299) {
       yield put({
         type: LOGIN_ERROR, 
         error: _.get(response, 'data'),
@@ -117,7 +117,7 @@ export function* doPatchUser (action) {
   const response = yield call(api.patchUser, formData);
 
   // If the response had an error status, but wasn't caught as an error
-  if (!response.status || response.status > 299) {
+  if (!_.isNil(response.status) && response.status > 299) {
     yield put({
       type: PATCH_USER_ERROR,
       error: _.get(response, 'data'),
