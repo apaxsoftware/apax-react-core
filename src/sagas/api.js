@@ -1,10 +1,11 @@
 import axios from 'axios';
-import { call, select } from 'redux-saga/effects';
+import { call, put, select } from 'redux-saga/effects';
 
 import { getToken } from '../selectors/account';
 import { getApiRoot, getTokenType } from '../selectors/env';
 
 import * as _ from 'lodash';
+import { GREATER_THAN_299_RESPONSE } from '../actions/general';
 
 const parseOptions = (options) => {
   let data = null;
@@ -65,7 +66,11 @@ export function* apiPost (path, options) {
   const headers = yield call(getHeaders, {authenticationRequired, customHeaders});
   const apiRoot = yield select(getApiRoot);
 
-  return yield axios.post(
+  // allow usage outside of yield axios function
+  let apiResponse = null;
+  let shouldReturnError = false;
+
+  yield axios.post(
     `${apiRoot}/${path}`,
     data,
     {
@@ -76,11 +81,22 @@ export function* apiPost (path, options) {
   ).then((res) => {
     // If the status is not a success, return all of the response
     if (res.status > 299) {
-      return res;
+      apiResponse = res;
+      shouldReturnError = true;
     }
 
-    return _.get(res, 'data', res);
+    apiResponse = _.get(res, 'data', res);
   });
+
+  // If the response status was greater than 299, put GREATER_THAN_299_RESPONSE action
+  if (shouldReturnError) {
+    yield put({
+      type: GREATER_THAN_299_RESPONSE,
+      response: apiResponse,
+    });
+  }
+
+  return apiResponse;
 }
 
 export function* apiGet (path, options = {}) {
@@ -97,7 +113,11 @@ export function* apiGet (path, options = {}) {
     url = `${url}?${queryString}`;
   }
 
-  return yield axios.get(
+  // allow usage outside of yield axios function
+  let apiResponse = null;
+  let shouldReturnError = false;
+
+  yield axios.get(
     url,
     {
       headers,
@@ -107,11 +127,22 @@ export function* apiGet (path, options = {}) {
   ).then((res) => {
     // If the status is not a success, return all of the response
     if (res.status > 299) {
-      return res;
+      apiResponse = res;
+      shouldReturnError = true;
     }
 
-    return _.get(res, 'data', res);
+    apiResponse = _.get(res, 'data', res);
   });
+
+  // If the response status was greater than 299, put GREATER_THAN_299_RESPONSE action
+  if (shouldReturnError) {
+    yield put({
+      type: GREATER_THAN_299_RESPONSE,
+      response: apiResponse,
+    });
+  }
+
+  return apiResponse;
 }
 
 export function* apiPut (path, options) {
@@ -122,7 +153,11 @@ export function* apiPut (path, options) {
 
   let url = `${apiRoot}/${path}`;
 
-  return yield axios.put(
+  // allow usage outside of yield axios function
+  let apiResponse = null;
+  let shouldReturnError = false;
+
+  yield axios.put(
     url,
     data,
     {
@@ -133,11 +168,22 @@ export function* apiPut (path, options) {
   ).then((res) => {
     // If the status is not a success, return all of the response
     if (res.status > 299) {
-      return res;
+      apiResponse = res;
+      shouldReturnError = true;
     }
-
-    return _.get(res, 'data', res);
+    
+    apiResponse = _.get(res, 'data', res);
   });
+
+  // If the response status was greater than 299, put GREATER_THAN_299_RESPONSE action
+  if (shouldReturnError) {
+    yield put({
+      type: GREATER_THAN_299_RESPONSE,
+      response: apiResponse,
+    });
+  }
+
+  return apiResponse;
 }
 
 export function* apiPatch (path, options) {
@@ -148,7 +194,11 @@ export function* apiPatch (path, options) {
 
   let url = `${apiRoot}/${path}`;
 
-  return yield axios.patch(
+  // allow usage outside of yield axios function
+  let apiResponse = null;
+  let shouldReturnError = false;
+
+  yield axios.patch(
     url,
     data,
     {
@@ -159,11 +209,22 @@ export function* apiPatch (path, options) {
   ).then((res) => {
     // If the status is not a success, return all of the response
     if (res.status > 299) {
-      return res;
+      apiResponse = res;
+      shouldReturnError = true;
     }
 
-    return _.get(res, 'data', res);
+    apiResponse = _.get(res, 'data', res);
   });
+
+  // If the response status was greater than 299, put GREATER_THAN_299_RESPONSE action
+  if (shouldReturnError) {
+    yield put({
+      type: GREATER_THAN_299_RESPONSE,
+      response: apiResponse,
+    });
+  }
+
+  return apiResponse;
 }
 
 export function* apiDelete (path, authenticationRequired = true) {
@@ -172,17 +233,32 @@ export function* apiDelete (path, authenticationRequired = true) {
 
   let url = `${apiRoot}/${path}`;
 
-  return yield axios.delete(
+  // allow usage outside of yield axios function
+  let apiResponse = null;
+  let shouldReturnError = false;
+
+  yield axios.delete(
     url,
     headers,
   ).then((res) => {
     // If the status is not a success, return all of the response
     if (res.status > 299) {
-      return res;
+      apiResponse = res;
+      shouldReturnError = true;
     }
 
-    return _.get(res, 'data', res);
+    apiResponse = _.get(res, 'data', res);
   });
+
+  // If the response status was greater than 299, put GREATER_THAN_299_RESPONSE action
+  if (shouldReturnError) {
+    yield put({
+      type: GREATER_THAN_299_RESPONSE,
+      response: apiResponse,
+    });
+  }
+
+  return apiResponse;
 }
 
 const api = {
